@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bandly
 
-## Getting Started
+Direktori band dan project musik Indonesia. Temukan band dari seluruh nusantara, dengarkan musik mereka langsung di platform, dan daftarkan band kamu.
 
-First, run the development server:
+## Fitur
+
+- **Jelajahi Band** — filter berdasarkan provinsi, kota, dan genre musik
+- **Halaman Band** — profil lengkap dengan embed YouTube, Spotify, Apple Music, dan link Bandcamp
+- **Mini Player** — putar musik langsung dari browser dengan floating player ala Spotify/YouTube, mendukung beberapa sumber sekaligus
+- **Upload Foto** — editor crop foto dengan drag & zoom sebelum upload
+- **Autentikasi** — login via email atau Google OAuth, lengkap dengan forgot password
+- **Dashboard** — kelola band milikmu (buat, edit, hapus)
+- **Admin Panel** — ban/unban user, hapus band yang melanggar ketentuan
+- **Dark / Light Mode** — toggle tema sesuai preferensi
+
+## Tech Stack
+
+- [Next.js 16](https://nextjs.org) — App Router
+- [Supabase](https://supabase.com) — database, auth, storage
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [next-themes](https://github.com/pacocoursey/next-themes)
+- [lucide-react](https://lucide.dev)
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Environment variables
+
+Buat file `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 3. Database migration
+
+Jalankan file berikut di Supabase SQL Editor secara berurutan:
+
+```
+supabase/migrations/001_schema.sql
+supabase/migrations/002_seed.sql
+supabase/migrations/003_storage.sql
+supabase/migrations/004_rls.sql
+supabase/migrations/005_admin.sql
+```
+
+### 4. Set admin pertama
+
+```sql
+UPDATE profiles SET role = 'admin' WHERE email = 'your@email.com';
+```
+
+### 5. Jalankan development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Buka [http://localhost:3000](http://localhost:3000).
