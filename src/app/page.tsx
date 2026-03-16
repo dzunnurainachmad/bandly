@@ -1,65 +1,90 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { Music2, MapPin, Guitar, Users } from 'lucide-react'
+import { getGenres } from '@/lib/queries'
 
-export default function Home() {
+const FEATURED_SLUGS = ['rock', 'metal', 'indie', 'jazz', 'pop', 'dangdut', 'reggae', 'electronic', 'folk', 'punk']
+
+export default async function Home() {
+  const allGenres = await getGenres()
+  const genres = allGenres.filter((g) => FEATURED_SLUGS.includes(g.slug))
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div>
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white py-20 px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="flex justify-center mb-4">
+            <Music2 className="w-12 h-12 opacity-80" />
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight">
+            Temukan Band &amp; Musisi<br />di Seluruh Indonesia
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+          <p className="text-indigo-100 text-lg mb-8 max-w-xl mx-auto">
+            Jelajahi ratusan band dan project musik dari Sabang sampai Merauke.
+            Filter berdasarkan provinsi, kota, dan genre favoritmu.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/browse"
+              className="bg-white text-indigo-700 font-semibold px-6 py-3 rounded-xl hover:bg-indigo-50 transition-colors"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              Jelajahi Band
+            </Link>
+            <Link
+              href="/submit"
+              className="border-2 border-white text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/10 transition-colors"
             >
-              Learning
-            </a>{" "}
-            center.
+              Daftarkan Band Kamu
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="max-w-5xl mx-auto px-4 py-16 grid sm:grid-cols-3 gap-8">
+        <div className="text-center">
+          <div className="bg-indigo-100 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <MapPin className="w-6 h-6 text-indigo-600" />
+          </div>
+          <h3 className="font-bold text-lg mb-1">Filter Lokasi</h3>
+          <p className="text-gray-500 text-sm">
+            Cari band berdasarkan 34 provinsi dan ratusan kota di Indonesia.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="text-center">
+          <div className="bg-purple-100 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <Guitar className="w-6 h-6 text-purple-600" />
+          </div>
+          <h3 className="font-bold text-lg mb-1">Filter Genre</h3>
+          <p className="text-gray-500 text-sm">
+            Dari Rock, Metal, Jazz, Dangdut hingga Electronic — semua ada di sini.
+          </p>
         </div>
-      </main>
+        <div className="text-center">
+          <div className="bg-emerald-100 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <Users className="w-6 h-6 text-emerald-600" />
+          </div>
+          <h3 className="font-bold text-lg mb-1">Cari Member</h3>
+          <p className="text-gray-500 text-sm">
+            Band yang buka lowongan member mudah ditemukan dengan filter khusus.
+          </p>
+        </div>
+      </section>
+
+      {/* Genre pills */}
+      <section className="max-w-5xl mx-auto px-4 pb-16">
+        <h2 className="text-xl font-bold mb-4">Jelajahi Genre</h2>
+        <div className="flex flex-wrap gap-2">
+          {genres.map((g) => (
+            <Link
+              key={g.id}
+              href={`/browse?genre=${g.id}`}
+              className="bg-white border border-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm hover:border-indigo-400 hover:text-indigo-600 transition-colors"
+            >
+              {g.name}
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
-  );
+  )
 }

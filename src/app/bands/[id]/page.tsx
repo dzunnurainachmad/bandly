@@ -1,0 +1,285 @@
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { MapPin, Calendar, Instagram, Music, UserPlus, ArrowLeft, Pencil, ExternalLink } from 'lucide-react'
+
+function YoutubeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  )
+}
+import { getBandById } from '@/lib/queries'
+import { getYouTubeEmbedUrl, getSpotifyEmbedUrl, getSpotifyEmbedHeight, getAppleMusicEmbedUrl, getAppleMusicEmbedHeight } from '@/lib/embed'
+import { Badge } from '@/components/ui/Badge'
+import { PlayButton } from '@/components/PlayButton'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
+
+interface Props {
+  params: Promise<{ id: string }>
+}
+
+export default async function BandDetailPage({ params }: Props) {
+  const { id } = await params
+  const [band, supabase] = await Promise.all([getBandById(id), createSupabaseServerClient()])
+
+  if (!band) notFound()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  const isOwner = !!user && user.id === band.user_id
+
+  const waLink = band.contact_wa ? `https://wa.me/${band.contact_wa}` : null
+  const youtubeEmbed = (band.youtube ? getYouTubeEmbedUrl(band.youtube) : null)
+    ?? (band.youtube_music ? getYouTubeEmbedUrl(band.youtube_music) : null)
+  const spotifyEmbed = band.spotify ? getSpotifyEmbedUrl(band.spotify) : null
+  const spotifyHeight = spotifyEmbed ? getSpotifyEmbedHeight(spotifyEmbed) : 352
+  const appleMusicEmbed = band.apple_music ? getAppleMusicEmbedUrl(band.apple_music) : null
+  const appleMusicHeight = appleMusicEmbed ? getAppleMusicEmbedHeight(appleMusicEmbed) : 450
+
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="flex items-center justify-between mb-6">
+        <Link
+          href="/browse"
+          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600"
+        >
+          <ArrowLeft className="w-4 h-4" /> Kembali
+        </Link>
+        {isOwner && (
+          <Link
+            href={`/bands/${id}/edit`}
+            className="inline-flex items-center gap-1.5 text-sm border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+          >
+            <Pencil className="w-3.5 h-3.5" /> Edit Band
+          </Link>
+        )}
+      </div>
+
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        {/* Cover photo */}
+        <div className="aspect-video bg-linear-to-br from-indigo-100 to-purple-100 relative">
+          {band.photo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={band.photo_url} alt={band.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="flex items-center justify-center w-full h-full">
+              <Music className="w-16 h-16 text-indigo-300" />
+            </div>
+          )}
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Header */}
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{band.name}</h1>
+              {(band.city_name || band.province_name) && (
+                <p className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mt-1">
+                  <MapPin className="w-4 h-4" />
+                  {band.city_name && `${band.city_name}, `}{band.province_name}
+                </p>
+              )}
+              {band.formed_year && (
+                <p className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm mt-0.5">
+                  <Calendar className="w-3.5 h-3.5" />
+                  Berdiri {band.formed_year}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <PlayButton
+                bandId={band.id}
+                bandName={band.name}
+                photoUrl={band.photo_url}
+                youtubeEmbed={youtubeEmbed}
+                spotifyEmbed={spotifyEmbed}
+                spotifyHeight={spotifyHeight}
+                appleMusicEmbed={appleMusicEmbed}
+                appleMusicHeight={appleMusicHeight}
+              />
+              {band.is_looking_for_members && (
+                <Badge variant="green" className="text-sm px-3 py-1">
+                  <UserPlus className="w-4 h-4 mr-1.5" />
+                  Membuka Lowongan Member
+                </Badge>
+              )}
+            </div>
+          </div>
+
+          {/* Genres */}
+          {Array.isArray(band.genres) && band.genres.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {band.genres.map((g) => (
+                <Badge key={g.id}>{g.name}</Badge>
+              ))}
+            </div>
+          )}
+
+          {/* Bio */}
+          {band.bio && (
+            <div>
+              <h2 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Tentang</h2>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-line">{band.bio}</p>
+            </div>
+          )}
+
+          {/* ── YouTube Player ────────────────────────────────── */}
+          {youtubeEmbed ? (
+            <div>
+              <h2 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                <YoutubeIcon className="w-4 h-4 text-red-500" />
+                YouTube
+              </h2>
+              <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 aspect-video">
+                <iframe
+                  src={youtubeEmbed}
+                  title={`${band.name} — YouTube`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
+              </div>
+            </div>
+          ) : (band.youtube || band.youtube_music) ? (
+            <div className="flex flex-wrap gap-2">
+              {band.youtube && (
+                <a href={band.youtube} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
+                >
+                  <YoutubeIcon className="w-4 h-4 text-red-500" /> Buka YouTube
+                </a>
+              )}
+              {band.youtube_music && (
+                <a href={band.youtube_music} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
+                >
+                  <YoutubeIcon className="w-4 h-4 text-red-500" /> Buka YouTube Music
+                </a>
+              )}
+            </div>
+          ) : null}
+
+          {/* ── Spotify Player ────────────────────────────────── */}
+          {spotifyEmbed ? (
+            <div>
+              <h2 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                <Music className="w-4 h-4 text-green-500" />
+                Spotify
+              </h2>
+              <iframe
+                src={spotifyEmbed}
+                title={`${band.name} — Spotify`}
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                className="w-full rounded-xl"
+                style={{ height: spotifyHeight }}
+              />
+            </div>
+          ) : band.spotify ? (
+            <a
+              href={band.spotify}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+            >
+              <Music className="w-4 h-4" /> Buka Spotify
+            </a>
+          ) : null}
+
+          {/* ── Apple Music Player ────────────────────────────── */}
+          {appleMusicEmbed ? (
+            <div>
+              <h2 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                <Music className="w-4 h-4 text-pink-500" />
+                Apple Music
+              </h2>
+              <iframe
+                src={appleMusicEmbed}
+                title={`${band.name} — Apple Music`}
+                allow="autoplay *; encrypted-media *; fullscreen *"
+                loading="lazy"
+                className="w-full rounded-xl"
+                style={{ height: appleMusicHeight }}
+                sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+              />
+            </div>
+          ) : band.apple_music ? (
+            <a
+              href={band.apple_music}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
+            >
+              <Music className="w-4 h-4 text-pink-500" /> Buka Apple Music
+            </a>
+          ) : null}
+
+          {/* ── Bandcamp ──────────────────────────────────────── */}
+          {band.bandcamp && (
+            <div>
+              <h2 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                <ExternalLink className="w-4 h-4 text-teal-500" />
+                Bandcamp
+              </h2>
+              <a
+                href={band.bandcamp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-teal-400 text-teal-700 dark:text-teal-400 px-4 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors text-sm font-medium"
+              >
+                <ExternalLink className="w-4 h-4" /> Buka di Bandcamp
+              </a>
+            </div>
+          )}
+
+          {/* ── Contact & Social ──────────────────────────────── */}
+          <div>
+            <h2 className="font-semibold text-gray-700 dark:text-gray-300 mb-3">Kontak & Media Sosial</h2>
+            <div className="flex flex-wrap gap-3">
+              {waLink && (
+                <a
+                  href={waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium"
+                >
+                  Hubungi via WhatsApp
+                </a>
+              )}
+              {band.instagram && (
+                <a
+                  href={`https://instagram.com/${band.instagram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
+                >
+                  <Instagram className="w-4 h-4" /> Instagram
+                </a>
+              )}
+              {band.youtube && !youtubeEmbed && (
+                <a
+                  href={band.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
+                >
+                  <YoutubeIcon className="w-4 h-4" /> YouTube
+                </a>
+              )}
+              {band.spotify && !spotifyEmbed && (
+                <a
+                  href={band.spotify}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm"
+                >
+                  <Music className="w-4 h-4" /> Spotify
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
