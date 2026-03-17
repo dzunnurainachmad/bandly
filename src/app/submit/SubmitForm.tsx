@@ -223,13 +223,14 @@ export function SubmitForm() {
       <div>
         <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Tahun Berdiri</label>
         <input
-          type="number"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           value={form.formed_year}
-          onChange={(e) => set('formed_year', e.target.value)}
+          onChange={(e) => { if (/^\d{0,4}$/.test(e.target.value)) set('formed_year', e.target.value) }}
           className={inputClass}
           placeholder="2010"
-          min="1950"
-          max={new Date().getFullYear()}
+          maxLength={4}
         />
       </div>
 

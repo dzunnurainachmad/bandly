@@ -201,7 +201,7 @@ export function EditForm({ band }: Props) {
       {/* Formed year */}
       <div>
         <label className={labelClass}>Tahun Berdiri</label>
-        <input type="number" value={form.formed_year} onChange={(e) => set('formed_year', e.target.value)} className={inputClass} placeholder="2010" min="1950" max={new Date().getFullYear()} />
+        <input type="text" inputMode="numeric" pattern="[0-9]*" value={form.formed_year} onChange={(e) => { if (/^\d{0,4}$/.test(e.target.value)) set('formed_year', e.target.value) }} className={inputClass} placeholder="2010" maxLength={4} />
       </div>
 
       {/* Province + City */}

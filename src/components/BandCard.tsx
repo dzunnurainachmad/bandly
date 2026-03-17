@@ -14,7 +14,7 @@ export function BandCard({ band }: { band: Band }) {
   const hasMedia = !!(youtubeEmbed || spotifyEmbed || appleMusicEmbed)
 
   return (
-    <div className="bg-[#fefaf4] dark:bg-[#231d15] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden hover:shadow-md transition-shadow group">
+    <div className="bg-[#fefaf4] dark:bg-[#231d15] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden hover:shadow-md transition-shadow group flex flex-col h-full">
       {/* Thumbnail */}
       <div className="aspect-video bg-linear-to-br from-amber-100 to-orange-100 relative">
         {band.photo_url ? (
@@ -55,20 +55,20 @@ export function BandCard({ band }: { band: Band }) {
         )}
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <Link href={`/bands/${band.id}`} className="hover:underline">
           <h3 className="font-bold text-lg text-stone-900 dark:text-stone-100 truncate">{band.name}</h3>
         </Link>
 
         {(band.city_name || band.province_name) && (
-          <p className="flex items-center gap-1 text-sm text-stone-500 dark:text-stone-400 mt-1">
-            <MapPin className="w-3.5 h-3.5" />
-            {band.city_name && `${band.city_name}, `}{band.province_name}
+          <p className="flex items-center gap-1 text-sm text-stone-500 dark:text-stone-400 mt-1 truncate">
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{band.city_name && `${band.city_name}, `}{band.province_name}</span>
           </p>
         )}
 
         {band.bio && (
-          <p className="text-sm text-stone-600 dark:text-stone-400 mt-2 line-clamp-2">{band.bio}</p>
+          <p className="text-sm text-stone-600 dark:text-stone-400 mt-2 line-clamp-2 leading-snug">{band.bio}</p>
         )}
 
         {Array.isArray(band.genres) && band.genres.length > 0 && (
@@ -83,7 +83,7 @@ export function BandCard({ band }: { band: Band }) {
         )}
 
         {(band.instagram || waLink) && (
-          <div className="mt-4 flex gap-2">
+          <div className="mt-auto pt-4 flex gap-2">
             {band.instagram && (
               <a
                 href={`https://instagram.com/${band.instagram.replace('@', '')}`}

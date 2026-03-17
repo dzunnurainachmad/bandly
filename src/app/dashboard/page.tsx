@@ -50,7 +50,7 @@ export default async function DashboardPage() {
           <p className="text-sm text-stone-500 dark:text-stone-400 mb-4">{myBands.length} band</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {myBands.map((band) => (
-              <div key={band.id} className="relative group/card">
+              <div key={band.id} className="relative group/card flex flex-col">
                 <BandCard band={band} />
                 <Link
                   href={`/bands/${band.id}/edit`}

@@ -723,4 +723,7 @@ insert into genres (name, slug) values
 ('Grunge', 'grunge'),
 ('Progressive', 'progressive'),
 ('Classical', 'classical'),
-('Psychedelic', 'psychedelic');
+('Psychedelic', 'psychedelic'),
+('Post-Punk', 'post-punk'),
+('New Wave', 'new-wave'),
+('Pop-Punk', 'pop-punk');
