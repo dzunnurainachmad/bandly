@@ -1,0 +1,120 @@
+import { describe, it, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { BandCard } from '@/components/BandCard'
+import type { Band } from '@/types'
+
+// Mock next/link
+vi.mock('next/link', () => ({
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
+}))
+
+// Mock PlayerContext
+vi.mock('@/contexts/PlayerContext', () => ({
+  usePlayer: () => ({ play: vi.fn(), currentTrack: null }),
+}))
+
+function makeBand(overrides: Partial<Band> = {}): Band {
+  return {
+    id: 'test-1',
+    name: 'Test Band',
+    bio: null,
+    formed_year: null,
+    province_id: null,
+    city_id: null,
+    contact_wa: null,
+    instagram: null,
+    youtube: null,
+    spotify: null,
+    youtube_music: null,
+    apple_music: null,
+    bandcamp: null,
+    photo_url: null,
+    is_looking_for_members: false,
+    user_id: 'user-1',
+    created_at: '2024-01-01',
+    ...overrides,
+  }
+}
+
+describe('BandCard', () => {
+  it('renders band name', () => {
+    render(<BandCard band={makeBand({ name: 'Burgerkill' })} />)
+    expect(screen.getByText('Burgerkill')).toBeInTheDocument()
+  })
+
+  it('renders location when province and city provided', () => {
+    render(<BandCard band={makeBand({ city_name: 'Bandung', province_name: 'Jawa Barat' })} />)
+    expect(screen.getByText('Bandung, Jawa Barat')).toBeInTheDocument()
+  })
+
+  it('renders only province when no city', () => {
+    render(<BandCard band={makeBand({ province_name: 'DKI Jakarta' })} />)
+    expect(screen.getByText('DKI Jakarta')).toBeInTheDocument()
+  })
+
+  it('does not render location when neither provided', () => {
+    render(<BandCard band={makeBand()} />)
+    expect(screen.queryByText(/,/)).not.toBeInTheDocument()
+  })
+
+  it('renders bio when provided', () => {
+    render(<BandCard band={makeBand({ bio: 'Band metal dari Bandung' })} />)
+    expect(screen.getByText('Band metal dari Bandung')).toBeInTheDocument()
+  })
+
+  it('does not render bio when null', () => {
+    render(<BandCard band={makeBand({ bio: null })} />)
+    expect(screen.queryByText('Band metal dari Bandung')).not.toBeInTheDocument()
+  })
+
+  it('renders genre badges', () => {
+    render(<BandCard band={makeBand({
+      genres: [
+        { id: 1, name: 'Metal', slug: 'metal' },
+        { id: 2, name: 'Hardcore', slug: 'hardcore' },
+      ],
+    })} />)
+    expect(screen.getByText('Metal')).toBeInTheDocument()
+    expect(screen.getByText('Hardcore')).toBeInTheDocument()
+  })
+
+  it('shows +N when more than 4 genres', () => {
+    render(<BandCard band={makeBand({
+      genres: [
+        { id: 1, name: 'Metal', slug: 'metal' },
+        { id: 2, name: 'Rock', slug: 'rock' },
+        { id: 3, name: 'Punk', slug: 'punk' },
+        { id: 4, name: 'Grunge', slug: 'grunge' },
+        { id: 5, name: 'Pop', slug: 'pop' },
+      ],
+    })} />)
+    expect(screen.getByText('+1')).toBeInTheDocument()
+  })
+
+  it('shows Open Member badge when looking for members', () => {
+    render(<BandCard band={makeBand({ is_looking_for_members: true })} />)
+    expect(screen.getByText('Open Member')).toBeInTheDocument()
+  })
+
+  it('renders Instagram link when provided', () => {
+    render(<BandCard band={makeBand({ instagram: '@testband' })} />)
+    const link = screen.getByText('Instagram')
+    expect(link).toBeInTheDocument()
+    expect(link.closest('a')).toHaveAttribute('href', 'https://instagram.com/testband')
+  })
+
+  it('renders WhatsApp link when contact_wa provided', () => {
+    render(<BandCard band={makeBand({ contact_wa: '628123456789' })} />)
+    const link = screen.getByText('WhatsApp')
+    expect(link).toBeInTheDocument()
+    expect(link.closest('a')).toHaveAttribute('href', 'https://wa.me/628123456789')
+  })
+
+  it('links band name to detail page', () => {
+    render(<BandCard band={makeBand({ id: 'band-42' })} />)
+    const link = screen.getByText('Test Band').closest('a')
+    expect(link).toHaveAttribute('href', '/bands/band-42')
+  })
+})
