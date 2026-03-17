@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { X } from 'lucide-react'
 import { getBands, getProvinces, getCitiesByProvince, getGenres } from '@/lib/queries'
-import { BandCard } from '@/components/BandCard'
+import { LoadMoreBands } from '@/components/LoadMoreBands'
 import { FilterBar } from '@/components/FilterBar'
 
 interface SearchParams {
@@ -34,14 +34,16 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
   const sp = await searchParams
 
   // Fetch static data server-side — no client fetch needed for these
-  const [bands, provinces, genres] = await Promise.all([
-    getBands({
-      province_id: sp.province ? Number(sp.province) : undefined,
-      city_id: sp.city ? Number(sp.city) : undefined,
-      genre_id: sp.genre ? Number(sp.genre) : undefined,
-      is_looking_for_members: sp.open === 'true' ? true : undefined,
-      search: sp.q,
-    }),
+  const filters = {
+    province_id: sp.province ? Number(sp.province) : undefined,
+    city_id: sp.city ? Number(sp.city) : undefined,
+    genre_id: sp.genre ? Number(sp.genre) : undefined,
+    is_looking_for_members: sp.open === 'true' ? true : undefined,
+    search: sp.q,
+  }
+
+  const [{ bands, hasMore }, provinces, genres] = await Promise.all([
+    getBands(filters),
     getProvinces(),
     getGenres(),
   ])
@@ -101,8 +103,6 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
             </div>
           )}
 
-          <p className="text-sm text-stone-500 dark:text-stone-400 mb-4">{bands.length} band ditemukan</p>
-
           {bands.length === 0 ? (
             <div className="text-center py-20 text-stone-400">
               <p className="text-lg font-medium">Tidak ada band yang ditemukan</p>
@@ -114,11 +114,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
               </p>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {bands.map((band) => (
-                <BandCard key={band.id} band={band} />
-              ))}
-            </div>
+            <LoadMoreBands initialBands={bands} initialHasMore={hasMore} filters={filters} />
           )}
         </div>
       </div>

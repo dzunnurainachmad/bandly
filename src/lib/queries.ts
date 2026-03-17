@@ -30,7 +30,12 @@ export async function getGenres(): Promise<Genre[]> {
   return data ?? []
 }
 
-export async function getBands(filters: BandFilters = {}): Promise<Band[]> {
+export const BANDS_PER_PAGE = 12
+
+export async function getBands(filters: BandFilters = {}, page = 0): Promise<{ bands: Band[]; hasMore: boolean }> {
+  const from = page * BANDS_PER_PAGE
+  const to = from + BANDS_PER_PAGE
+
   let query = supabase
     .from('bands_view')
     .select('*')
@@ -49,20 +54,54 @@ export async function getBands(filters: BandFilters = {}): Promise<Band[]> {
     query = query.ilike('name', `%${filters.search}%`)
   }
 
-  const { data, error } = await query
-  if (error) throw error
-
-  let bands: Band[] = data ?? []
-
-  // Filter by genre (post-query since genres is a JSON array)
+  // If genre filter, fetch all (post-filter); otherwise paginate
   if (filters.genre_id) {
-    bands = bands.filter((b) =>
+    const { data, error } = await query
+    if (error) throw error
+    const all = (data ?? []).filter((b) =>
       Array.isArray(b.genres) &&
       b.genres.some((g: Genre) => g.id === filters.genre_id)
     )
+    return {
+      bands: all.slice(from, to),
+      hasMore: all.length > to,
+    }
   }
 
-  return bands
+  // Fetch one extra to check if there are more
+  query = query.range(from, to)
+  const { data, error } = await query
+  if (error) throw error
+
+  const all: Band[] = data ?? []
+  const hasMore = all.length > BANDS_PER_PAGE
+
+  return {
+    bands: hasMore ? all.slice(0, BANDS_PER_PAGE) : all,
+    hasMore,
+  }
+}
+
+export async function getUserBands(userId: string, page = 0): Promise<{ bands: Band[]; hasMore: boolean }> {
+  const from = page * BANDS_PER_PAGE
+  const to = from + BANDS_PER_PAGE
+
+  const { data, error } = await supabase
+    .from('bands_view')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .range(from, to)
+
+  if (error) throw error
+
+  const all: Band[] = data ?? []
+  const hasMore = all.length > BANDS_PER_PAGE
+
+  return {
+    bands: hasMore ? all.slice(0, BANDS_PER_PAGE) : all,
+    hasMore,
+  }
 }
 
 export async function getBandById(id: string): Promise<Band | null> {

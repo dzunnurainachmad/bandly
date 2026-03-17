@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Plus, Music, Pencil } from 'lucide-react'
+import { Plus, Music } from 'lucide-react'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
-import { BandCard } from '@/components/BandCard'
-import type { Band } from '@/types'
+import { getUserBands } from '@/lib/queries'
+import { LoadMoreDashboard } from '@/components/LoadMoreDashboard'
 
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient()
@@ -11,13 +11,7 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login?next=/dashboard')
 
-  const { data: bands } = await supabase
-    .from('bands_view')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-
-  const myBands: Band[] = bands ?? []
+  const { bands, hasMore } = await getUserBands(user.id)
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
@@ -35,7 +29,7 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      {myBands.length === 0 ? (
+      {bands.length === 0 ? (
         <div className="text-center py-24 text-stone-400 dark:text-stone-500">
           <Music className="w-12 h-12 mx-auto mb-3 opacity-40" />
           <p className="font-medium">Belum ada band terdaftar</p>
@@ -46,22 +40,7 @@ export default async function DashboardPage() {
           </p>
         </div>
       ) : (
-        <>
-          <p className="text-sm text-stone-500 dark:text-stone-400 mb-4">{myBands.length} band</p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {myBands.map((band) => (
-              <div key={band.id} className="relative group/card flex flex-col">
-                <BandCard band={band} />
-                <Link
-                  href={`/bands/${band.id}/edit`}
-                  className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/60 hover:bg-black/80 text-white text-xs px-2.5 py-1.5 rounded-lg opacity-0 group-hover/card:opacity-100 transition-opacity"
-                >
-                  <Pencil className="w-3 h-3" /> Edit
-                </Link>
-              </div>
-            ))}
-          </div>
-        </>
+        <LoadMoreDashboard initialBands={bands} initialHasMore={hasMore} />
       )}
     </div>
   )
