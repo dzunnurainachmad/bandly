@@ -10,11 +10,15 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-4o-mini'),
-    system: `Kamu adalah asisten Bandly, platform untuk menemukan band Indonesia.
+    system: `Kamu adalah asisten BandTelusur, platform untuk menemukan band Indonesia.
 Jawab dalam Bahasa Indonesia dengan gaya santai dan menarik.
-Gunakan tool semanticSearch untuk pencarian deskriptif atau bahasa alami (misal: "band indie dreamy dari Jogja", "band rock energik").
-Gunakan tool searchBands untuk filter spesifik (genre tertentu, kota tertentu, nama band).
-Jika user mencari posisi spesifik (drummer, vokalis, gitaris, dll), gunakan searchBands dengan parameter bio_search dan is_looking_for_members.
+
+ATURAN PEMILIHAN TOOL:
+- Jika user menyebut KOTA atau PROVINSI tertentu (misal: Bandung, Jogja, Jakarta, Surabaya), WAJIB gunakan searchBands dengan parameter city atau province. Jangan gunakan semanticSearch saja untuk query berbasis lokasi.
+- Gunakan semanticSearch HANYA untuk pencarian deskriptif tanpa lokasi spesifik (misal: "band yang musiknya dreamy", "band rock energik").
+- Jika user menyebut lokasi + deskripsi (misal: "band indie dari Bandung"), gunakan searchBands dengan filter city/province DAN genre jika relevan.
+- Jika user mencari posisi spesifik (drummer, vokalis, gitaris, dll), gunakan searchBands dengan parameter bio_search dan is_looking_for_members.
+
 Setelah mendapat hasil dari tool, rangkum hasilnya dengan menarik. Sebutkan nama band, genre, lokasi, dan info penting lainnya.
 Jika tidak ada hasil, sarankan kata kunci atau filter lain.
 Jangan pernah mengarang data band — hanya gunakan data dari tool.`,
@@ -74,20 +78,37 @@ Jangan pernah mengarang data band — hanya gunakan data dari tool.`,
         },
       }),
       semanticSearch: tool({
-        description: 'Pencarian semantik untuk menemukan band berdasarkan deskripsi natural language. Cocok untuk query deskriptif seperti "band indie dreamy dari Jogja" atau "band rock energik yang sering manggung"',
+        description: 'Pencarian semantik untuk menemukan band berdasarkan deskripsi natural language. JANGAN gunakan untuk query berbasis lokasi — gunakan searchBands dengan city/province. Cocok untuk query deskriptif seperti "band yang musiknya dreamy" atau "band rock energik"',
         inputSchema: z.object({
           query: z.string().describe('Deskripsi band yang dicari dalam bahasa alami'),
+          city: z.string().optional().describe('Filter opsional nama kota untuk mempersempit hasil'),
+          province: z.string().optional().describe('Filter opsional nama provinsi untuk mempersempit hasil'),
         }),
-        execute: async ({ query }) => {
+        execute: async ({ query, city, province }) => {
           const embedding = await generateEmbedding(query)
           const { data, error } = await supabase.rpc('search_bands_semantic', {
             query_embedding: JSON.stringify(embedding),
             match_threshold: 0.3,
-            match_count: 10,
+            match_count: 20,
           })
           if (error) return { error: error.message, bands: [] }
+
+          let bands = data ?? []
+
+          // Post-filter by location if specified
+          if (city) {
+            bands = bands.filter((b: Record<string, unknown>) =>
+              typeof b.city_name === 'string' && b.city_name.toLowerCase().includes(city.toLowerCase())
+            )
+          }
+          if (province) {
+            bands = bands.filter((b: Record<string, unknown>) =>
+              typeof b.province_name === 'string' && b.province_name.toLowerCase().includes(province.toLowerCase())
+            )
+          }
+
           return {
-            bands: (data ?? []).map((b: Record<string, unknown>) => ({
+            bands: bands.slice(0, 10).map((b: Record<string, unknown>) => ({
               id: b.id,
               name: b.name,
               bio: b.bio,
@@ -98,7 +119,7 @@ Jangan pernah mengarang data band — hanya gunakan data dari tool.`,
               photo_url: b.photo_url,
               formed_year: b.formed_year,
             })),
-            total: (data ?? []).length,
+            total: bands.length,
           }
         },
       }),

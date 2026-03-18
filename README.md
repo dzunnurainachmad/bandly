@@ -1,4 +1,4 @@
-# Bandly
+# BandTelusur
 
 Direktori band dan project musik Indonesia. Temukan band dari seluruh nusantara, dengarkan musik mereka langsung di platform, dan daftarkan band kamu.
 

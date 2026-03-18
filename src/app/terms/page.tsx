@@ -13,7 +13,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">1. Penerimaan Ketentuan</h2>
           <p className="text-stone-600 dark:text-stone-400">
-            Dengan mengakses dan menggunakan Bandly, Anda menyetujui untuk terikat oleh syarat dan ketentuan ini.
+            Dengan mengakses dan menggunakan BandTelusur, Anda menyetujui untuk terikat oleh syarat dan ketentuan ini.
             Jika Anda tidak menyetujui ketentuan ini, mohon untuk tidak menggunakan layanan kami.
           </p>
         </section>
@@ -21,7 +21,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">2. Deskripsi Layanan</h2>
           <p className="text-stone-600 dark:text-stone-400">
-            Bandly adalah platform direktori band Indonesia yang memungkinkan pengguna untuk mendaftarkan band,
+            BandTelusur adalah platform direktori band Indonesia yang memungkinkan pengguna untuk mendaftarkan band,
             mencari band berdasarkan lokasi dan genre, serta menghubungkan musisi di seluruh Indonesia.
           </p>
         </section>
@@ -40,9 +40,9 @@ export default function TermsPage() {
           <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">4. Konten Pengguna</h2>
           <ul className="list-disc pl-5 text-stone-600 dark:text-stone-400 space-y-1">
             <li>Anda memiliki hak atas konten yang Anda unggah (foto, bio, informasi band).</li>
-            <li>Dengan mengunggah konten, Anda memberikan Bandly lisensi non-eksklusif untuk menampilkan konten tersebut di platform.</li>
+            <li>Dengan mengunggah konten, Anda memberikan BandTelusur lisensi non-eksklusif untuk menampilkan konten tersebut di platform.</li>
             <li>Konten yang melanggar hukum, bersifat SARA, pornografi, atau merugikan pihak lain dilarang keras.</li>
-            <li>Bandly berhak menghapus konten yang melanggar ketentuan tanpa pemberitahuan sebelumnya.</li>
+            <li>BandTelusur berhak menghapus konten yang melanggar ketentuan tanpa pemberitahuan sebelumnya.</li>
           </ul>
         </section>
 
@@ -69,16 +69,16 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">7. Fitur AI</h2>
           <p className="text-stone-600 dark:text-stone-400">
-            Bandly menggunakan teknologi AI untuk fitur seperti pembuatan bio dan pencarian band.
+            BandTelusur menggunakan teknologi AI untuk fitur seperti pembuatan bio dan pencarian band.
             Hasil yang dihasilkan AI bersifat saran dan dapat diedit oleh pengguna.
-            Bandly tidak bertanggung jawab atas keakuratan konten yang dihasilkan AI.
+            BandTelusur tidak bertanggung jawab atas keakuratan konten yang dihasilkan AI.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">8. Pembatasan Tanggung Jawab</h2>
           <p className="text-stone-600 dark:text-stone-400">
-            Bandly disediakan &quot;sebagaimana adanya&quot; tanpa jaminan apapun.
+            BandTelusur disediakan &quot;sebagaimana adanya&quot; tanpa jaminan apapun.
             Kami tidak bertanggung jawab atas kerugian yang timbul dari penggunaan platform,
             termasuk namun tidak terbatas pada kehilangan data atau gangguan layanan.
           </p>
@@ -87,7 +87,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">9. Perubahan Ketentuan</h2>
           <p className="text-stone-600 dark:text-stone-400">
-            Bandly berhak mengubah syarat dan ketentuan ini sewaktu-waktu.
+            BandTelusur berhak mengubah syarat dan ketentuan ini sewaktu-waktu.
             Perubahan akan berlaku segera setelah dipublikasikan di halaman ini.
             Penggunaan berkelanjutan setelah perubahan berarti Anda menyetujui ketentuan yang diperbarui.
           </p>
@@ -97,7 +97,7 @@ export default function TermsPage() {
           <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">10. Kontak</h2>
           <p className="text-stone-600 dark:text-stone-400">
             Jika Anda memiliki pertanyaan mengenai syarat dan ketentuan ini,
-            silakan hubungi kami melalui email di support@bandly.id.
+            silakan hubungi kami melalui email di support@bandtelusur.id.
           </p>
         </section>
       </div>

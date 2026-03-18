@@ -243,7 +243,7 @@ export function LoginForm() {
                   <Link href="/terms" target="_blank" className="text-amber-700 dark:text-amber-500 underline hover:text-amber-800">
                     Syarat & Ketentuan
                   </Link>{' '}
-                  Bandly
+                  BandTelusur
                 </span>
               </label>
             )}

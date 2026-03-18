@@ -11,7 +11,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 const geist = Geist({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Bandly — Temukan Band Indonesia',
+  title: 'BandTelusur — Temukan Band Indonesia',
   description:
     'Platform untuk menemukan band dan project musik di seluruh Indonesia. Filter berdasarkan provinsi, kota, dan genre.',
 }

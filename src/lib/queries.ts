@@ -54,18 +54,23 @@ export async function getBands(filters: BandFilters = {}, page = 0): Promise<{ b
     query = query.ilike('name', `%${filters.search}%`)
   }
 
-  // If genre filter, fetch all (post-filter with OR logic); otherwise paginate
+  // If genre filter, use RPC for server-side pagination
   if (filters.genre_ids && filters.genre_ids.length > 0) {
-    const { data, error } = await query
+    const { data, error } = await supabase.rpc('filter_bands_by_genre', {
+      genre_ids: filters.genre_ids,
+      province_filter: filters.province_id ?? null,
+      city_filter: filters.city_id ?? null,
+      looking_for_members: filters.is_looking_for_members ?? null,
+      search_term: filters.search ?? null,
+      page_offset: from,
+      page_limit: BANDS_PER_PAGE + 1,
+    })
     if (error) throw error
-    const genreSet = new Set(filters.genre_ids)
-    const all = (data ?? []).filter((b) =>
-      Array.isArray(b.genres) &&
-      b.genres.some((g: Genre) => genreSet.has(g.id))
-    )
+    const all: Band[] = data ?? []
+    const hasMore = all.length > BANDS_PER_PAGE
     return {
-      bands: all.slice(from, to),
-      hasMore: all.length > to,
+      bands: hasMore ? all.slice(0, BANDS_PER_PAGE) : all,
+      hasMore,
     }
   }
 

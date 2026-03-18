@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Music2, MapPin, Guitar, Users } from 'lucide-react'
+import { MapPin, Guitar, Users } from 'lucide-react'
+import { LogoBT } from '@/components/LogoBT'
 import { getGenres } from '@/lib/queries'
 
 const FEATURED_SLUGS = ['rock', 'metal', 'indie', 'jazz', 'pop', 'dangdut', 'reggae', 'electronic', 'folk', 'punk']
@@ -13,7 +14,7 @@ export default async function Home() {
       <section className="bg-gradient-to-br from-amber-700 to-amber-900 text-white py-12 sm:py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <div className="flex justify-center mb-4">
-            <Music2 className="w-10 h-10 sm:w-12 sm:h-12 opacity-80" />
+            <LogoBT className="w-12 h-12 sm:w-14 sm:h-14" />
           </div>
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
             Temukan Band<br />di Seluruh Indonesia
@@ -93,8 +94,8 @@ export default async function Home() {
             {/* Brand */}
             <div>
               <div className="flex items-center gap-2 font-bold text-amber-700 text-lg mb-3">
-                <Music2 className="w-5 h-5" />
-                Bandly
+                <LogoBT className="w-6 h-6" />
+                BandTelusur
               </div>
               <p className="text-sm text-stone-500 dark:text-stone-400">
                 Platform direktori band Indonesia. Temukan, daftarkan, dan hubungkan musisi dari seluruh nusantara.
@@ -128,7 +129,7 @@ export default async function Home() {
           </div>
 
           <div className="mt-10 pt-6 border-t border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-400 dark:text-stone-500">
-            <p>&copy; {new Date().getFullYear()} Bandly. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} BandTelusur. All rights reserved.</p>
             <div className="flex items-center gap-4">
               <Link href="/terms" className="hover:text-amber-700 dark:hover:text-amber-500 transition-colors">
                 Syarat & Ketentuan
