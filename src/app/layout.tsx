@@ -3,6 +3,7 @@ import { Geist } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/Navbar'
 import { MiniPlayer } from '@/components/MiniPlayer'
+import { MainContent } from '@/components/MainContent'
 import { PlayerProvider } from '@/contexts/PlayerContext'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { AuthProvider } from '@/contexts/AuthContext'
@@ -23,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AuthProvider>
             <PlayerProvider>
               <Navbar />
-              <main className="pb-24">{children}</main>
+              <MainContent>{children}</MainContent>
               <MiniPlayer />
             </PlayerProvider>
           </AuthProvider>

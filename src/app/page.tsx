@@ -85,6 +85,60 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="border-t border-stone-200 dark:border-stone-800 bg-[#fefaf4] dark:bg-[#231d15]">
+        <div className="max-w-5xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {/* Brand */}
+            <div>
+              <div className="flex items-center gap-2 font-bold text-amber-700 text-lg mb-3">
+                <Music2 className="w-5 h-5" />
+                Bandly
+              </div>
+              <p className="text-sm text-stone-500 dark:text-stone-400">
+                Platform direktori band Indonesia. Temukan, daftarkan, dan hubungkan musisi dari seluruh nusantara.
+              </p>
+            </div>
+
+            {/* Navigation */}
+            <div>
+              <h4 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Navigasi</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/browse" className="text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">Jelajahi Band</Link></li>
+                <li><Link href="/chat" className="text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">Discover AI</Link></li>
+                <li><Link href="/submit" className="text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">Daftarkan Band</Link></li>
+                <li><Link href="/terms" className="text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">Syarat & Ketentuan</Link></li>
+              </ul>
+            </div>
+
+            {/* Genre */}
+            <div>
+              <h4 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">Genre Populer</h4>
+              <ul className="space-y-2 text-sm">
+                {genres.slice(0, 5).map((g) => (
+                  <li key={g.id}>
+                    <Link href={`/browse?genre=${g.id}`} className="text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">
+                      {g.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-10 pt-6 border-t border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-400 dark:text-stone-500">
+            <p>&copy; {new Date().getFullYear()} Bandly. All rights reserved.</p>
+            <div className="flex items-center gap-4">
+              <Link href="/terms" className="hover:text-amber-700 dark:hover:text-amber-500 transition-colors">
+                Syarat & Ketentuan
+              </Link>
+              <span>·</span>
+              <p>Dibuat dengan semangat untuk musik Indonesia.</p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

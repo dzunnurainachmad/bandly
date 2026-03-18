@@ -40,11 +40,11 @@ export function MiniPlayer() {
   const isVideo = track.source === 'youtube'
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
+    <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
       {/* Iframe */}
       <div
         className={clsx(
-          'bg-stone-950 transition-all duration-300 overflow-hidden',
+          'bg-stone-950 transition-all duration-300 overflow-hidden pointer-events-auto',
           expanded
             ? isVideo
               ? 'aspect-video max-h-50 sm:max-h-70'
@@ -63,7 +63,7 @@ export function MiniPlayer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="bg-stone-900 border-t border-stone-700 px-3 py-2 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-3">
+      <div className="bg-stone-900 border-t border-stone-700 px-3 py-2 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-3 pointer-events-auto">
         {/* Thumbnail */}
         <div className="w-11 h-11 rounded-lg overflow-hidden shrink-0 bg-stone-700 flex items-center justify-center">
           {track.photoUrl ? (

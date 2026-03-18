@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { Music2, LogOut, LayoutDashboard, LogIn, ShieldCheck, Menu, X } from 'lucide-react'
+import { Music2, LogOut, LayoutDashboard, LogIn, ShieldCheck, Menu, X, MessageSquare } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabaseBrowser } from '@/lib/supabase-browser'
@@ -46,6 +46,10 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-2 text-sm">
             <Link href="/browse" className="px-3 py-2 text-stone-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">
               Jelajahi
+            </Link>
+            <Link href="/chat" className="flex items-center gap-1.5 px-3 py-2 text-stone-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">
+              <MessageSquare className="w-4 h-4" />
+              Discover AI
             </Link>
 
             {!loading && (
@@ -103,6 +107,10 @@ export function Navbar() {
         <div className="md:hidden border-t border-stone-200 dark:border-stone-800 bg-[#fefaf4] dark:bg-[#231d15] px-4 py-3 space-y-1">
           <Link href="/browse" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors">
             Jelajahi
+          </Link>
+          <Link href="/chat" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors">
+            <MessageSquare className="w-4 h-4" />
+            Discover AI
           </Link>
 
           {!loading && user && (

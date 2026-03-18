@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 
@@ -29,6 +30,7 @@ export function LoginForm() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
 
   async function handleForgotPassword(e: React.FormEvent) {
     e.preventDefault()
@@ -66,6 +68,12 @@ export function LoginForm() {
     setLoading(true)
     setError('')
     setSuccess('')
+
+    if (mode === 'register' && !agreedToTerms) {
+      setError('Kamu harus menyetujui Syarat & Ketentuan untuk mendaftar.')
+      setLoading(false)
+      return
+    }
 
     if (mode === 'login') {
       const { error } = await supabaseBrowser.auth.signInWithPassword({ email, password })
@@ -222,6 +230,24 @@ export function LoginForm() {
               )}
             </div>
 
+            {mode === 'register' && (
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="rounded text-amber-700 w-4 h-4 mt-0.5 shrink-0"
+                />
+                <span className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
+                  Saya menyetujui{' '}
+                  <Link href="/terms" target="_blank" className="text-amber-700 dark:text-amber-500 underline hover:text-amber-800">
+                    Syarat & Ketentuan
+                  </Link>{' '}
+                  Bandly
+                </span>
+              </label>
+            )}
+
             {error && (
               <p className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
                 {error}
@@ -235,7 +261,7 @@ export function LoginForm() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (mode === 'register' && !agreedToTerms)}
               className="w-full bg-amber-700 hover:bg-amber-800 text-white py-2.5 rounded-lg font-semibold text-sm transition-colors disabled:opacity-60"
             >
               {loading ? 'Memproses...' : mode === 'login' ? 'Masuk' : 'Buat Akun'}
