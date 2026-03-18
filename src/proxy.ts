@@ -26,7 +26,11 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Auth required routes
-  const isProtected = pathname.startsWith('/submit') || pathname.startsWith('/dashboard')
+  const isProtected =
+    pathname.startsWith('/submit') ||
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/chat') ||
+    /^\/bands\/[^/]+\/edit/.test(pathname)
   if (!user && isProtected) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('next', pathname)
@@ -55,5 +59,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/submit', '/dashboard/:path*', '/admin/:path*'],
+  matcher: ['/submit', '/dashboard/:path*', '/admin/:path*', '/chat', '/bands/:id/edit'],
 }
