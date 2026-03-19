@@ -3,15 +3,40 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChat } from '@ai-sdk/react'
 import Link from 'next/link'
-import { Send, Bot, User, MessageSquare } from 'lucide-react'
+import { Send, Bot, User, MessageSquare, Trash2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import type { Band } from '@/types'
+import type { UIMessage } from '@ai-sdk/react'
+
+const STORAGE_KEY = 'bt-chat-history'
+
+function loadMessages(): UIMessage[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
 
 export default function ChatPage() {
-  const { messages, sendMessage, status } = useChat()
+  const [initialMessages] = useState<UIMessage[]>(loadMessages)
+  const { messages, sendMessage, status, setMessages } = useChat({ initialMessages })
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
   const isLoading = status === 'streaming' || status === 'submitted'
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+    }
+  }, [messages])
+
+  function handleClear() {
+    setMessages([])
+    localStorage.removeItem(STORAGE_KEY)
+  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -27,12 +52,22 @@ export default function ChatPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col min-h-[calc(100vh-3.5rem)]">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 relative">
         <MessageSquare className="w-10 h-10 text-amber-600 mx-auto mb-2" />
         <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">Discover Band</h1>
         <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
           Tanya apa aja soal band Indonesia
         </p>
+        {messages.length > 0 && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-0 top-0 flex items-center gap-1.5 text-xs text-stone-400 hover:text-red-500 transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Hapus riwayat
+          </button>
+        )}
       </div>
 
       {/* Messages */}

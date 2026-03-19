@@ -23,6 +23,8 @@ export function SubmitForm() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [photoSuggestions, setPhotoSuggestions] = useState<{ suggested_genres: string[]; vibe_tags: string[] } | null>(null)
+  const [analyzingPhoto, setAnalyzingPhoto] = useState(false)
 
   const [form, setForm] = useState({
     name: '',
@@ -82,12 +84,35 @@ export function SubmitForm() {
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
-  function handleCropConfirm(croppedFile: File) {
+  async function handleCropConfirm(croppedFile: File) {
     if (photoPreview) URL.revokeObjectURL(photoPreview)
     setPhotoFile(croppedFile)
     setPhotoPreview(URL.createObjectURL(croppedFile))
     if (cropSrc) URL.revokeObjectURL(cropSrc)
     setCropSrc(null)
+    setPhotoSuggestions(null)
+
+    // Analyze photo with Vision in background
+    setAnalyzingPhoto(true)
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve((reader.result as string).split(',')[1])
+        reader.onerror = reject
+        reader.readAsDataURL(croppedFile)
+      })
+      const availableGenres = genres.map((g) => g.name).join(', ')
+      const res = await fetch('/api/analyze-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64, mimeType: croppedFile.type, availableGenres }),
+      })
+      if (res.ok) setPhotoSuggestions(await res.json())
+    } catch {
+      // Suggestions are optional, ignore errors
+    } finally {
+      setAnalyzingPhoto(false)
+    }
   }
 
   function handleCropCancel() {
@@ -239,6 +264,54 @@ export function SubmitForm() {
           onChange={handleFileChange}
           className="hidden"
         />
+
+        {/* AI photo suggestions */}
+        {analyzingPhoto && (
+          <p className="text-xs text-stone-400 mt-2 flex items-center gap-1">
+            <Sparkles className="w-3 h-3 animate-pulse" /> Menganalisis foto...
+          </p>
+        )}
+        {photoSuggestions && (
+          <div className="mt-3 space-y-2">
+            {photoSuggestions.suggested_genres.length > 0 && (
+              <div>
+                <p className="text-xs text-stone-500 dark:text-stone-400 mb-1.5 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-amber-500" /> Saran genre dari foto:
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {photoSuggestions.suggested_genres.map((name) => {
+                    const genre = genres.find((g) => g.name.toLowerCase() === name.toLowerCase())
+                    if (!genre) return null
+                    const selected = form.genre_ids.includes(genre.id)
+                    return (
+                      <button
+                        key={name}
+                        type="button"
+                        onClick={() => !selected && toggleGenre(genre.id)}
+                        className={`px-2.5 py-1 rounded-full text-xs border transition-colors ${
+                          selected
+                            ? 'bg-amber-700 text-white border-amber-700 opacity-60 cursor-default'
+                            : 'border-amber-400 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                        }`}
+                      >
+                        {selected ? '✓ ' : '+ '}{name}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+            {photoSuggestions.vibe_tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {photoSuggestions.vibe_tags.map((tag) => (
+                  <span key={tag} className="px-2.5 py-1 rounded-full text-xs bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Name */}

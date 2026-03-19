@@ -1,8 +1,10 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { experimental_useObject as useObject } from '@ai-sdk/react'
-import { Sparkles, Loader2 } from 'lucide-react'
-import { BandInsightsSchema } from '@/app/api/analyze-band/route'
+import { Sparkles, Loader2, ThumbsUp, ThumbsDown } from 'lucide-react'
+import { BandInsightsSchema } from '@/lib/schemas'
+import type { BandInsights as BandInsightsType } from '@/lib/schemas'
 import type { Band } from '@/types'
 
 interface Props {
@@ -10,13 +12,44 @@ interface Props {
 }
 
 export function BandInsights({ band }: Props) {
-  const { object: insights, submit, isLoading, error, clear } = useObject({
+  const [cached, setCached] = useState<BandInsightsType | null>(null)
+  const [loadingCache, setLoadingCache] = useState(true)
+  const [feedbackSent, setFeedbackSent] = useState<'good' | 'bad' | null>(null)
+  const { object: streamed, submit, isLoading, error, clear } = useObject({
     api: '/api/analyze-band',
     schema: BandInsightsSchema,
   })
 
+  useEffect(() => {
+    fetch(`/api/analyze-band?band_id=${band.id}`)
+      .then((r) => r.json())
+      .then((data) => { if (data?.insights) setCached(data.insights) })
+      .finally(() => setLoadingCache(false))
+  }, [band.id])
+
+  const insights = streamed ?? cached
+
+  function sendFeedback(rating: 'good' | 'bad') {
+    if (!insights) return
+    setFeedbackSent(rating)
+    fetch('/api/ai-feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        band_id: band.id,
+        route: 'analyze-band',
+        input: { name: band.name, bio: band.bio, genres: band.genres?.map((g) => g.name), province: band.province_name, city: band.city_name, formed_year: band.formed_year },
+        output: insights,
+        rating,
+      }),
+    })
+  }
+
   function analyze() {
+    setCached(null)
+    setFeedbackSent(null)
     submit({
+      band_id: band.id,
       name: band.name,
       bio: band.bio,
       genres: band.genres?.map((g) => g.name),
@@ -33,7 +66,7 @@ export function BandInsights({ band }: Props) {
           <Sparkles className="w-4 h-4 text-amber-500" />
           AI Insights
         </h2>
-        {!insights && (
+        {!insights && !loadingCache && (
           <button
             onClick={analyze}
             disabled={isLoading}
@@ -115,12 +148,27 @@ export function BandInsights({ band }: Props) {
           )}
 
           {!isLoading && (
-            <button
-              onClick={clear}
-              className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300"
-            >
-              Reset
-            </button>
+            <div className="flex items-center justify-between">
+              <button
+                onClick={clear}
+                className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300"
+              >
+                Reset
+              </button>
+              {feedbackSent ? (
+                <span className="text-xs text-stone-400">Terima kasih!</span>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-stone-400">Hasilnya akurat?</span>
+                  <button onClick={() => sendFeedback('good')} className="text-stone-400 hover:text-green-500 transition-colors">
+                    <ThumbsUp className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={() => sendFeedback('bad')} className="text-stone-400 hover:text-red-500 transition-colors">
+                    <ThumbsDown className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}

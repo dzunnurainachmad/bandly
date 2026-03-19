@@ -35,6 +35,19 @@ export function buildAnalyzeBandPrompt(profile: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// analyze-photo — suggest genres and vibe tags from band photo
+// v1: initial — visual aesthetic analysis, returns genre + vibe suggestions
+// ---------------------------------------------------------------------------
+export function buildAnalyzePhotoPrompt(availableGenres: string): string {
+  return `Kamu adalah kurator musik Indonesia. Analisis foto band ini secara visual.
+
+Genre yang tersedia di platform: ${availableGenres}
+
+Berikan saran berdasarkan estetika visual (penampilan, kostum, ekspresi, suasana foto).
+Pilih genre hanya dari daftar yang tersedia. Vibe tags boleh bebas.`
+}
+
+// ---------------------------------------------------------------------------
 // generate-bio — short band bio in Bahasa Indonesia
 // v1: initial — 2-3 sentences, casual tone, no preamble
 // ---------------------------------------------------------------------------

@@ -1,30 +1,31 @@
 import { streamObject } from 'ai'
 import { openai } from '@ai-sdk/openai'
-import { z } from 'zod'
 import { buildAnalyzeBandPrompt } from '@/lib/prompts'
+import { logAiCall } from '@/lib/ai-logger'
+import { BandInsightsSchema } from '@/lib/schemas'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
-export const BandInsightsSchema = z.object({
-  style_tags: z
-    .array(z.string())
-    .describe('3-5 kata kunci gaya musik spesifik, contoh: "distorsi tebal", "vokal melengking"'),
-  mood: z
-    .array(z.string())
-    .describe('2-4 kata suasana/mood musik, contoh: "melankolis", "energik"'),
-  target_audience: z
-    .string()
-    .describe('Satu kalimat deskripsi target pendengar, contoh: "Anak muda 20-an yang suka..."'),
-  strengths: z
-    .array(z.string())
-    .describe('2-3 kelebihan band berdasarkan profil yang tersedia'),
-  booking_pitch: z
-    .string()
-    .describe('Satu kalimat pitch singkat untuk event organizer'),
-})
+export { BandInsightsSchema } from '@/lib/schemas'
+export type { BandInsights } from '@/lib/schemas'
 
-export type BandInsights = z.infer<typeof BandInsightsSchema>
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const band_id = searchParams.get('band_id')
+  if (!band_id) return Response.json(null)
+
+  const { data } = await supabaseAdmin
+    .from('bands')
+    .select('insights, insights_cached_at')
+    .eq('id', band_id)
+    .single()
+
+  if (!data?.insights) return Response.json(null)
+  return Response.json(data)
+}
 
 export async function POST(req: Request) {
-  const { name, bio, genres, province, city, formed_year } = await req.json()
+  const { name, bio, genres, province, city, formed_year, band_id } = await req.json()
+  const startedAt = Date.now()
 
   if (!name?.trim()) {
     return Response.json({ error: 'Nama band wajib diisi' }, { status: 400 })
@@ -50,6 +51,23 @@ export async function POST(req: Request) {
     output: 'object',
     schema: BandInsightsSchema,
     prompt: buildAnalyzeBandPrompt(profile),
+    onFinish: ({ object, usage }) => {
+      logAiCall({
+        route: 'analyze-band',
+        model: 'gpt-4o-mini',
+        latencyMs: Date.now() - startedAt,
+        inputTokens: usage?.inputTokens,
+        outputTokens: usage?.outputTokens,
+        bandId: band_id,
+      })
+      if (band_id && object) {
+        supabaseAdmin
+          .from('bands')
+          .update({ insights: object, insights_cached_at: new Date().toISOString() })
+          .eq('id', band_id)
+          .then()
+      }
+    },
   })
 
   return result.toTextStreamResponse()

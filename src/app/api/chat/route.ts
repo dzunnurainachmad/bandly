@@ -4,10 +4,12 @@ import { z } from 'zod/v4'
 import { supabase } from '@/lib/supabase'
 import { generateEmbedding } from '@/lib/embeddings'
 import { CHAT_SYSTEM_PROMPT } from '@/lib/prompts'
+import { logAiCall } from '@/lib/ai-logger'
 
 export async function POST(req: Request) {
   const { messages } = await req.json()
   const modelMessages = await convertToModelMessages(messages)
+  const startedAt = Date.now()
 
   const result = streamText({
     model: openai('gpt-4o-mini'),
@@ -151,6 +153,15 @@ export async function POST(req: Request) {
       }),
     },
     stopWhen: stepCountIs(3),
+    onFinish: ({ usage }) => {
+      logAiCall({
+        route: 'chat',
+        model: 'gpt-4o-mini',
+        latencyMs: Date.now() - startedAt,
+        inputTokens: usage?.inputTokens,
+        outputTokens: usage?.outputTokens,
+      })
+    },
   })
 
   return result.toUIMessageStreamResponse()
