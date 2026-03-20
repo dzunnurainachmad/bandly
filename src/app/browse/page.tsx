@@ -7,6 +7,8 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { FilterBar } from '@/components/FilterBar'
 import { FilterLoadingProvider } from '@/components/FilterLoadingContext'
 import { ResultsOverlay } from '@/components/ResultsOverlay'
+import { SortBar } from '@/components/SortBar'
+import type { SortOption } from '@/types'
 
 interface SearchParams {
   province?: string
@@ -14,6 +16,7 @@ interface SearchParams {
   genre?: string
   open?: string
   q?: string
+  sort?: string
 }
 
 interface BrowsePageProps {
@@ -29,6 +32,7 @@ function removeParam(sp: SearchParams, key: keyof SearchParams, also?: keyof Sea
   if (next.genre) p.set('genre', next.genre)
   if (next.open) p.set('open', next.open)
   if (next.q) p.set('q', next.q)
+  if (next.sort) p.set('sort', next.sort)
   const qs = p.toString()
   return qs ? `/browse?${qs}` : '/browse'
 }
@@ -43,12 +47,13 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
     genre_ids: sp.genre ? sp.genre.split(',').map(Number) : undefined,
     is_looking_for_members: sp.open === 'true' ? true : undefined,
     search: sp.q,
+    sort: (sp.sort as SortOption) || undefined,
   }
 
   const supabase = await createSupabaseServerClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const [{ bands, hasMore }, provinces, genres, savedRows] = await Promise.all([
+  const [{ bands, hasMore, total }, provinces, genres, savedRows] = await Promise.all([
     getBands(filters),
     getProvinces(),
     getGenres(),
@@ -129,6 +134,8 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
                 </Link>
               </div>
             )}
+
+            <SortBar currentSort={sp.sort} total={total} searchParams={sp} />
 
             <ResultsOverlay>
               {bands.length === 0 ? (

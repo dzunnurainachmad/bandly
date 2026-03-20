@@ -39,6 +39,7 @@ export function LoadMoreBands({ initialBands, initialHasMore, filters, isLoggedI
       if (filters.genre_ids?.length) params.set('genre', filters.genre_ids.join(','))
       if (filters.is_looking_for_members) params.set('open', 'true')
       if (filters.search) params.set('q', filters.search)
+      if (filters.sort) params.set('sort', filters.sort)
 
       const res = await fetch(`/api/bands?${params.toString()}`)
       const data = await res.json()

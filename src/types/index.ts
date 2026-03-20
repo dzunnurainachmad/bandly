@@ -36,6 +36,7 @@ export interface Band {
   is_looking_for_members: boolean
   user_id: string | null
   created_at: string
+  updated_at: string
   // from bands_view
   province_name?: string
   province_slug?: string
@@ -44,10 +45,13 @@ export interface Band {
   genres?: Genre[]
 }
 
+export type SortOption = 'name_asc' | 'name_desc' | 'updated_asc' | 'updated_desc'
+
 export interface BandFilters {
   province_id?: number
   city_id?: number
   genre_ids?: number[]
   is_looking_for_members?: boolean
   search?: string
+  sort?: SortOption
 }

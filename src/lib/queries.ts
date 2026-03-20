@@ -32,14 +32,27 @@ export async function getGenres(): Promise<Genre[]> {
 
 export const BANDS_PER_PAGE = 12
 
-export async function getBands(filters: BandFilters = {}, page = 0): Promise<{ bands: Band[]; hasMore: boolean }> {
+function sortBands(bands: Band[], sort?: string): Band[] {
+  const copy = [...bands]
+  switch (sort) {
+    case 'name_asc':    return copy.sort((a, b) => a.name.localeCompare(b.name))
+    case 'name_desc':   return copy.sort((a, b) => b.name.localeCompare(a.name))
+    case 'updated_asc': return copy.sort((a, b) => (a.updated_at ?? '').localeCompare(b.updated_at ?? ''))
+    default:            return copy.sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))
+  }
+}
+
+export async function getBands(filters: BandFilters = {}, page = 0): Promise<{ bands: Band[]; hasMore: boolean; total: number | null }> {
   const from = page * BANDS_PER_PAGE
   const to = from + BANDS_PER_PAGE
+
+  const sortCol = filters.sort === 'name_asc' || filters.sort === 'name_desc' ? 'name' : 'updated_at'
+  const sortAsc = filters.sort === 'name_asc' || filters.sort === 'updated_asc'
 
   let query = supabase
     .from('bands_view')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order(sortCol, { ascending: sortAsc })
 
   if (filters.province_id) {
     query = query.eq('province_id', filters.province_id)
@@ -56,27 +69,37 @@ export async function getBands(filters: BandFilters = {}, page = 0): Promise<{ b
 
   // If genre filter, use RPC for server-side pagination
   if (filters.genre_ids && filters.genre_ids.length > 0) {
-    const { data, error } = await supabase.rpc('filter_bands_by_genre', {
+    const rpcParams = {
       genre_ids: filters.genre_ids,
       province_filter: filters.province_id ?? null,
       city_filter: filters.city_id ?? null,
       looking_for_members: filters.is_looking_for_members ?? null,
       search_term: filters.search ?? null,
-      page_offset: from,
-      page_limit: BANDS_PER_PAGE + 1,
-    })
+    }
+    const [{ data, error }, { data: countData }] = await Promise.all([
+      supabase.rpc('filter_bands_by_genre', { ...rpcParams, page_offset: from, page_limit: BANDS_PER_PAGE + 1 }),
+      supabase.rpc('count_bands_by_genre', rpcParams),
+    ])
     if (error) throw error
-    const all: Band[] = data ?? []
+    const all: Band[] = sortBands(data ?? [], filters.sort)
     const hasMore = all.length > BANDS_PER_PAGE
     return {
       bands: hasMore ? all.slice(0, BANDS_PER_PAGE) : all,
       hasMore,
+      total: typeof countData === 'number' ? countData : null,
     }
   }
 
+  // Count query (lightweight HEAD request)
+  let countQuery = supabase.from('bands_view').select('*', { count: 'exact', head: true })
+  if (filters.province_id) countQuery = countQuery.eq('province_id', filters.province_id)
+  if (filters.city_id) countQuery = countQuery.eq('city_id', filters.city_id)
+  if (filters.is_looking_for_members !== undefined) countQuery = countQuery.eq('is_looking_for_members', filters.is_looking_for_members)
+  if (filters.search) countQuery = countQuery.ilike('name', `%${filters.search}%`)
+
   // Fetch one extra to check if there are more
   query = query.range(from, to)
-  const { data, error } = await query
+  const [{ data, error }, { count }] = await Promise.all([query, countQuery])
   if (error) throw error
 
   const all: Band[] = data ?? []
@@ -85,6 +108,7 @@ export async function getBands(filters: BandFilters = {}, page = 0): Promise<{ b
   return {
     bands: hasMore ? all.slice(0, BANDS_PER_PAGE) : all,
     hasMore,
+    total: count ?? null,
   }
 }
 

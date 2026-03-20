@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBands } from '@/lib/queries'
+import type { SortOption } from '@/types'
 
 export async function GET(request: NextRequest) {
   const sp = request.nextUrl.searchParams
@@ -12,6 +13,7 @@ export async function GET(request: NextRequest) {
       genre_ids: sp.get('genre') ? sp.get('genre')!.split(',').map(Number) : undefined,
       is_looking_for_members: sp.get('open') === 'true' ? true : undefined,
       search: sp.get('q') || undefined,
+      sort: (sp.get('sort') as SortOption) || undefined,
     },
     page,
   )

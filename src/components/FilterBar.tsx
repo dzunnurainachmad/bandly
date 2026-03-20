@@ -136,8 +136,8 @@ export function FilterBar() {
       </button>
 
       {/* Filter fields — always visible on md+, collapsible on mobile */}
-      <div className={`space-y-4 overflow-hidden transition-all duration-200 md:max-h-none md:mt-4 md:opacity-100 ${
-        mobileOpen ? 'max-h-150 mt-4 opacity-100' : 'max-h-0 mt-0 opacity-0 md:max-h-none md:opacity-100 md:mt-4'
+      <div className={`space-y-4 transition-all duration-200 md:mt-4 ${
+        mobileOpen ? 'mt-4' : 'hidden md:block'
       }`}>
         {/* Search */}
         <div className="relative">
@@ -149,7 +149,7 @@ export function FilterBar() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
-            className="w-full pl-9 pr-8 py-2.5 border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full pl-9 pr-8 py-2.5 border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 rounded-lg text-sm focus:outline-none focus:border-amber-500"
           />
           {search && (
             <button

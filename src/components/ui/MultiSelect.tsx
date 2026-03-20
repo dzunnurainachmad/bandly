@@ -77,9 +77,9 @@ export function MultiSelect({
           onClick={() => setOpen((o) => !o)}
           className={clsx(
             'w-full flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-lg border transition-all',
-            'focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer',
+            'focus:outline-none focus:border-amber-500 cursor-pointer',
             open
-              ? 'border-amber-500 ring-2 ring-amber-500 bg-[#fefaf4] dark:bg-stone-800'
+              ? 'border-amber-500 bg-[#fefaf4] dark:bg-stone-800'
               : 'border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 hover:border-stone-400 dark:hover:border-stone-500',
           )}
         >

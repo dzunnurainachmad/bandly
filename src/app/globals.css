@@ -30,8 +30,8 @@ body {
   color: var(--foreground);
 }
 
-/* Focus-visible accessibility — ring on keyboard nav only */
-:focus-visible {
+/* Focus-visible accessibility — ring on keyboard nav only (not on form inputs/buttons which style themselves) */
+:focus-visible:not(input):not(textarea):not(button):not(select) {
   outline: 2px solid #b45309;
   outline-offset: 2px;
   border-radius: 4px;

@@ -73,9 +73,9 @@ export function Select({
           disabled={disabled}
           className={clsx(
             'w-full flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-lg border transition-all',
-            'focus:outline-none focus:ring-2 focus:ring-amber-500',
+            'focus:outline-none focus:border-amber-500',
             open
-              ? 'border-amber-500 ring-2 ring-amber-500 bg-[#fefaf4] dark:bg-stone-800'
+              ? 'border-amber-500 bg-[#fefaf4] dark:bg-stone-800'
               : 'border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 hover:border-stone-400 dark:hover:border-stone-500',
             disabled && 'bg-stone-50 dark:bg-[#231d15] text-stone-400 cursor-not-allowed hover:border-stone-300 dark:hover:border-stone-600',
             !disabled && 'cursor-pointer'

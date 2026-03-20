@@ -62,7 +62,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-1 text-sm">
+          <div className="hidden lg:flex items-center gap-1 text-sm">
             <Link href="/browse" className={navLinkClass('/browse')}>
               Jelajahi
             </Link>
@@ -116,7 +116,7 @@ export function Navbar() {
           </div>
 
           {/* Mobile: theme toggle + hamburger */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-2">
             <ThemeToggle />
             <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" className="p-2.5 -mr-1 text-stone-600 dark:text-stone-300 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -127,7 +127,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       <div
-        className={`md:hidden border-t border-stone-200 dark:border-stone-800 bg-[#fefaf4]/95 dark:bg-[#231d15]/95 backdrop-blur-md px-4 overflow-y-auto overscroll-contain transition-all duration-200 ease-out ${
+        className={`lg:hidden border-t border-stone-200 dark:border-stone-800 bg-[#fefaf4]/95 dark:bg-[#231d15]/95 backdrop-blur-md px-4 overflow-y-auto overscroll-contain transition-all duration-200 ease-out ${
           menuOpen ? 'max-h-[calc(100dvh-3.5rem)] py-3 opacity-100' : 'max-h-0 py-0 opacity-0'
         }`}
       >
