@@ -10,6 +10,7 @@ function YoutubeIcon({ className }: { className?: string }) {
   )
 }
 import { getBandById, getSimilarBands } from '@/lib/queries'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import { FlagBandButton } from '@/components/FlagBandButton'
 import { getYouTubeEmbedUrl, getSpotifyEmbedUrl, getSpotifyEmbedHeight, getAppleMusicEmbedUrl, getAppleMusicEmbedHeight } from '@/lib/embed'
 import { Badge } from '@/components/ui/Badge'
@@ -34,6 +35,15 @@ export default async function BandDetailPage({ params }: Props) {
 
   const { data: { user } } = await supabase.auth.getUser()
   const isOwner = !!user && user.id === band.user_id
+
+  const ownerProfile = band.user_id
+    ? await supabaseAdmin
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('id', band.user_id)
+        .single()
+        .then(({ data }) => data)
+    : null
 
   const waLink = band.contact_wa ? `https://wa.me/${band.contact_wa}` : null
   const youtubeEmbed = (band.youtube ? getYouTubeEmbedUrl(band.youtube) : null)
@@ -80,6 +90,11 @@ export default async function BandDetailPage({ params }: Props) {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
             <div>
               <h1 className="text-xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100">{band.name}</h1>
+              {ownerProfile && band.user_id && (
+                <Link href={`/u/${band.user_id}`} className="text-xs text-stone-400 hover:text-amber-600 transition-colors mt-0.5 inline-block">
+                  Oleh {ownerProfile.display_name ?? 'Pengguna'}
+                </Link>
+              )}
               {(band.city_name || band.province_name) && (
                 <p className="flex items-center gap-1 text-stone-500 dark:text-stone-400 mt-1">
                   <MapPin className="w-4 h-4" />

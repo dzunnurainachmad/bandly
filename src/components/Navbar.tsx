@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { LogOut, LayoutDashboard, LogIn, ShieldCheck, Menu, X, MessageSquare } from 'lucide-react'
+import { LogOut, LayoutDashboard, LogIn, ShieldCheck, Menu, X, MessageSquare, Settings } from 'lucide-react'
 import { LogoBT } from './LogoBT'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/contexts/AuthContext'
@@ -70,9 +70,9 @@ export function Navbar() {
                     Daftarkan Band
                   </Link>
                   <div className="flex items-center gap-2 pl-2 border-l border-stone-200 dark:border-stone-700">
-                    <div className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-400 flex items-center justify-center text-xs font-bold">
+                    <Link href="/settings" title="Profil" className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-400 flex items-center justify-center text-xs font-bold hover:ring-2 hover:ring-amber-400 transition-all">
                       {initials}
-                    </div>
+                    </Link>
                     <button onClick={handleSignOut} title="Keluar" className="p-1.5 text-stone-400 hover:text-red-500 transition-colors rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800">
                       <LogOut className="w-4 h-4" />
                     </button>
@@ -128,6 +128,10 @@ export function Navbar() {
               </Link>
               <Link href="/submit" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors">
                 Daftarkan Band
+              </Link>
+              <Link href="/settings" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors">
+                <Settings className="w-4 h-4" />
+                Edit Profil
               </Link>
               <div className="flex items-center justify-between px-3 py-2.5 border-t border-stone-200 dark:border-stone-700 mt-2 pt-3">
                 <div className="flex items-center gap-2">
