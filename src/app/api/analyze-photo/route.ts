@@ -3,6 +3,7 @@ import { openai } from '@ai-sdk/openai'
 import { z } from 'zod'
 import { buildAnalyzePhotoPrompt } from '@/lib/prompts'
 import { logAiCall } from '@/lib/ai-logger'
+import { checkRateLimit, getIp, rateLimitResponse } from '@/lib/rate-limit'
 
 const PhotoAnalysisSchema = z.object({
   suggested_genres: z.array(z.string()).describe('Genre musik yang cocok berdasarkan visual, pilih dari daftar yang tersedia'),
@@ -10,6 +11,9 @@ const PhotoAnalysisSchema = z.object({
 })
 
 export async function POST(req: Request) {
+  const { allowed } = checkRateLimit(`analyze-photo:${getIp(req)}`, 5, 60_000)
+  if (!allowed) return rateLimitResponse()
+
   const { image, mimeType, availableGenres } = await req.json()
 
   if (!image) return Response.json({ error: 'Image required' }, { status: 400 })

@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { logAiCall } from '@/lib/ai-logger'
 import { MODERATE_BAND_AGENT_PROMPT, PROMPT_VERSIONS } from '@/lib/prompts'
 import { ModerationVerdictSchema } from '@/lib/schemas'
+import { checkRateLimit, getIp, rateLimitResponse } from '@/lib/rate-limit'
 
 function parseJsonFromText(text: string) {
   const codeBlock = text.match(/```json\s*([\s\S]*?)\s*```/)
@@ -15,6 +16,9 @@ function parseJsonFromText(text: string) {
 }
 
 export async function POST(req: Request) {
+  const { allowed } = checkRateLimit(`moderate-band-agent:${getIp(req)}`, 5, 60_000)
+  if (!allowed) return rateLimitResponse()
+
   const { band_id, flag_id } = await req.json()
   if (!band_id) {
     return Response.json({ error: 'band_id diperlukan' }, { status: 400 })

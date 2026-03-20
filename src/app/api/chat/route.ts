@@ -5,8 +5,12 @@ import { supabase } from '@/lib/supabase'
 import { generateEmbedding } from '@/lib/embeddings'
 import { CHAT_SYSTEM_PROMPT, PROMPT_VERSIONS } from '@/lib/prompts'
 import { logAiCall } from '@/lib/ai-logger'
+import { checkRateLimit, getIp, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function POST(req: Request) {
+  const { allowed } = checkRateLimit(`chat:${getIp(req)}`, 15, 60_000)
+  if (!allowed) return rateLimitResponse()
+
   const { messages } = await req.json()
   const modelMessages = await convertToModelMessages(messages)
   const startedAt = Date.now()
@@ -15,6 +19,7 @@ export async function POST(req: Request) {
     model: openai('gpt-4o-mini'),
     system: CHAT_SYSTEM_PROMPT,
     messages: modelMessages,
+    maxOutputTokens: 600,
     tools: {
       searchBands: tool({
         description: 'Cari band berdasarkan filter genre, lokasi (provinsi/kota), kebutuhan anggota, atau nama',

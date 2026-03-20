@@ -2,8 +2,12 @@ import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { buildGenerateBioPrompt, PROMPT_VERSIONS } from '@/lib/prompts'
 import { logAiCall } from '@/lib/ai-logger'
+import { checkRateLimit, getIp, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function POST(req: Request) {
+  const { allowed } = checkRateLimit(`generate-bio:${getIp(req)}`, 5, 60_000)
+  if (!allowed) return rateLimitResponse()
+
   const { name, genre, formedYear, location } = await req.json()
   const startedAt = Date.now()
 

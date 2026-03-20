@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { isAdmin } from '@/lib/admin-queries'
 
 // POST /api/flag-band — authenticated user flags a band for review
 export async function POST(req: Request) {
@@ -37,6 +38,10 @@ export async function POST(req: Request) {
 
 // PATCH /api/flag-band — admin updates flag status (approve/reject)
 export async function PATCH(req: Request) {
+  if (!(await isAdmin())) {
+    return Response.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   const { flag_id, status } = await req.json()
   if (!flag_id || !['approved', 'rejected'].includes(status)) {
     return Response.json({ error: 'flag_id dan status (approved/rejected) diperlukan' }, { status: 400 })

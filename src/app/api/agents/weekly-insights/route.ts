@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { logAiCall } from '@/lib/ai-logger'
 import { buildWeeklyInsightsPrompt, PROMPT_VERSIONS } from '@/lib/prompts'
 import { WeeklyInsightsSchema } from '@/lib/schemas'
+import { isAdmin } from '@/lib/admin-queries'
 
 function parseJsonFromText(text: string) {
   const codeBlock = text.match(/```json\s*([\s\S]*?)\s*```/)
@@ -12,12 +13,23 @@ function parseJsonFromText(text: string) {
   return JSON.parse(jsonStr)
 }
 
-// Accepts GET (for Vercel Cron) or POST (for manual trigger)
-export async function GET() {
+// GET — called by Vercel Cron; verify CRON_SECRET if set
+export async function GET(req: Request) {
+  const secret = process.env.CRON_SECRET
+  if (secret) {
+    const auth = req.headers.get('authorization')
+    if (auth !== `Bearer ${secret}`) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+  }
   return run()
 }
 
+// POST — manual trigger from admin UI; requires admin session
 export async function POST() {
+  if (!(await isAdmin())) {
+    return Response.json({ error: 'Forbidden' }, { status: 403 })
+  }
   return run()
 }
 

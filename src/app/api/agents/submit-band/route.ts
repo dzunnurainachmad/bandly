@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { logAiCall } from '@/lib/ai-logger'
 import { buildSubmitBandAgentPrompt, PROMPT_VERSIONS } from '@/lib/prompts'
 import { SubmitBandAgentSchema } from '@/lib/schemas'
+import { checkRateLimit, getIp, rateLimitResponse } from '@/lib/rate-limit'
 
 function parseJsonFromText(text: string) {
   const codeBlock = text.match(/```json\s*([\s\S]*?)\s*```/)
@@ -15,6 +16,9 @@ function parseJsonFromText(text: string) {
 }
 
 export async function POST(req: Request) {
+  const { allowed } = checkRateLimit(`submit-band-agent:${getIp(req)}`, 3, 60_000)
+  if (!allowed) return rateLimitResponse()
+
   const { url } = await req.json()
   if (!url?.trim()) {
     return Response.json({ error: 'URL diperlukan' }, { status: 400 })

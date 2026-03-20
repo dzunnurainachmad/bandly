@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Users, Music, ShieldX, ShieldCheck, Trash2, Search, Flag } from 'lucide-react'
+import { Users, Music, ShieldX, ShieldCheck, Trash2, Search, Flag, BarChart2 } from 'lucide-react'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 import { deleteBand } from '@/lib/queries'
 
@@ -94,6 +94,12 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
         className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-400 transition-colors"
       >
         <Flag className="w-4 h-4" /> Moderasi
+      </Link>
+      <Link
+        href="/admin/ai-metrics"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-400 transition-colors"
+      >
+        <BarChart2 className="w-4 h-4" /> AI Metrics
       </Link>
       </div>
 
