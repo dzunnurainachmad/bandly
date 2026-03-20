@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { X } from 'lucide-react'
 import { getBands, getProvinces, getCitiesByProvince, getGenres } from '@/lib/queries'
 import { LoadMoreBands } from '@/components/LoadMoreBands'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { FilterBar } from '@/components/FilterBar'
 import { FilterLoadingProvider } from '@/components/FilterLoadingContext'
 import { ResultsOverlay } from '@/components/ResultsOverlay'
@@ -44,11 +45,19 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
     search: sp.q,
   }
 
-  const [{ bands, hasMore }, provinces, genres] = await Promise.all([
+  const supabase = await createSupabaseServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const [{ bands, hasMore }, provinces, genres, savedRows] = await Promise.all([
     getBands(filters),
     getProvinces(),
     getGenres(),
+    user
+      ? supabase.from('saved_bands').select('band_id').eq('user_id', user.id).then(({ data }) => data ?? [])
+      : Promise.resolve([]),
   ])
+
+  const savedBandIds = savedRows.map((r: { band_id: string }) => r.band_id)
 
   // Resolve labels for active filter chips
   const activeProvince = sp.province ? provinces.find((p) => p.id === Number(sp.province)) : null
@@ -133,7 +142,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
                   </p>
                 </div>
               ) : (
-                <LoadMoreBands initialBands={bands} initialHasMore={hasMore} filters={filters} />
+                <LoadMoreBands initialBands={bands} initialHasMore={hasMore} filters={filters} isLoggedIn={!!user} savedBandIds={savedBandIds} />
               )}
             </ResultsOverlay>
           </div>

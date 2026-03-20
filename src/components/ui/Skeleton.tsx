@@ -2,17 +2,125 @@ export function Bone({ className }: { className?: string }) {
   return <div className={`bg-stone-200 dark:bg-stone-700 rounded-lg animate-pulse ${className ?? ''}`} />
 }
 
+export function FormFieldSkeleton({ label = true, tall = false }: { label?: boolean; tall?: boolean }) {
+  return (
+    <div>
+      {label && <Bone className="h-4 w-28 mb-1.5" />}
+      <Bone className={tall ? 'h-20 w-full' : 'h-9 w-full'} />
+    </div>
+  )
+}
+
+export function FormSkeleton({ variant = 'submit' }: { variant?: 'submit' | 'edit' }) {
+  return (
+    <div className="space-y-5 bg-[#fefaf4] dark:bg-[#231d15] border border-stone-200 dark:border-stone-700 rounded-2xl p-4 sm:p-6">
+      {/* Fill from URL — submit only */}
+      {variant === 'submit' && (
+        <div className="border border-dashed border-stone-200 dark:border-stone-700 rounded-xl p-4 space-y-2">
+          <Bone className="h-4 w-40" />
+          <Bone className="h-3 w-full" />
+          <div className="flex gap-2">
+            <Bone className="h-9 flex-1" />
+            <Bone className="h-9 w-28 rounded-lg" />
+          </div>
+        </div>
+      )}
+
+      {/* Photo area */}
+      <div>
+        <Bone className="h-4 w-20 mb-2" />
+        <Bone className="aspect-video w-full rounded-xl" />
+      </div>
+
+      {/* Name */}
+      <FormFieldSkeleton />
+
+      {/* Bio */}
+      <div>
+        <div className="flex justify-between mb-1">
+          <Bone className="h-4 w-28" />
+          <Bone className="h-4 w-32" />
+        </div>
+        <Bone className="h-20 w-full" />
+      </div>
+
+      {/* Formed year */}
+      <FormFieldSkeleton />
+
+      {/* Province + City */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <FormFieldSkeleton />
+        <FormFieldSkeleton />
+      </div>
+
+      {/* Genres */}
+      <div>
+        <Bone className="h-4 w-16 mb-2" />
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <Bone key={i} className="h-7 w-16 rounded-full" />
+          ))}
+        </div>
+      </div>
+
+      {/* WhatsApp */}
+      <div>
+        <Bone className="h-4 w-32 mb-1.5" />
+        <div className="flex">
+          <Bone className="h-9 w-14 rounded-r-none rounded-l-lg" />
+          <Bone className="h-9 flex-1 rounded-l-none rounded-r-lg" />
+        </div>
+      </div>
+
+      {/* Email */}
+      <FormFieldSkeleton />
+
+      {/* Social links grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <FormFieldSkeleton key={i} />
+        ))}
+      </div>
+
+      {/* Checkbox */}
+      <div className="flex items-center gap-3">
+        <Bone className="h-4 w-4 rounded" />
+        <Bone className="h-4 w-64" />
+      </div>
+
+      {/* Submit button(s) */}
+      {variant === 'edit' ? (
+        <>
+          <div className="flex gap-3">
+            <Bone className="h-10 flex-1 rounded-lg" />
+            <Bone className="h-10 flex-1 rounded-lg" />
+          </div>
+          <div className="pt-4 border-t border-stone-200 dark:border-stone-700 flex justify-end">
+            <Bone className="h-8 w-32 rounded-lg" />
+          </div>
+        </>
+      ) : (
+        <Bone className="h-10 w-full rounded-lg" />
+      )}
+    </div>
+  )
+}
+
 export function CardSkeleton() {
   return (
-    <div className="bg-[#fefaf4] dark:bg-[#231d15] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden">
+    <div className="bg-[#fefaf4] dark:bg-[#231d15] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden flex flex-col h-full">
       <Bone className="aspect-video rounded-none" />
-      <div className="p-4 space-y-3">
+      <div className="p-4 flex flex-col flex-1 space-y-3">
         <Bone className="h-5 w-3/4" />
         <Bone className="h-4 w-1/2" />
         <Bone className="h-4 w-full" />
-        <div className="flex gap-2 pt-2">
+        <div className="flex gap-1.5 pt-1">
           <Bone className="h-6 w-16 rounded-full" />
           <Bone className="h-6 w-16 rounded-full" />
+        </div>
+        <div className="flex gap-2 pt-2 mt-auto">
+          <Bone className="h-8 flex-1 rounded-lg" />
+          <Bone className="h-8 flex-1 rounded-lg" />
         </div>
       </div>
     </div>

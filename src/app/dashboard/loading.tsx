@@ -3,15 +3,29 @@ import { Bone, CardSkeleton } from '@/components/ui/Skeleton'
 export default function DashboardLoading() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
-      <div className="flex items-center justify-between mb-8">
-        <div className="space-y-2">
-          <Bone className="h-7 w-32" />
-          <Bone className="h-4 w-48" />
+      {/* Profile card skeleton */}
+      <div className="flex items-center gap-4 mb-8 p-4 bg-[#fefaf4] dark:bg-[#231d15] rounded-xl border border-stone-200 dark:border-stone-700">
+        <Bone className="w-14 h-14 rounded-full shrink-0" />
+        <div className="flex-1 space-y-2">
+          <Bone className="h-4 w-40" />
+          <Bone className="h-3 w-24" />
         </div>
-        <Bone className="h-10 w-36 rounded-lg" />
+        <div className="flex gap-2 shrink-0">
+          <Bone className="h-8 w-24 rounded-lg" />
+          <Bone className="h-8 w-16 rounded-lg" />
+        </div>
       </div>
 
-      <Bone className="h-4 w-16 mb-4" />
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Bone className="h-7 w-28" />
+          <Bone className="h-8 w-24 rounded-lg" />
+        </div>
+        <Bone className="h-9 w-36 rounded-lg" />
+      </div>
+
+      {/* Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
           <CardSkeleton key={i} />

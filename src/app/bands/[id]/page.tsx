@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/Badge'
 import { PlayButton } from '@/components/PlayButton'
 import { BandCard } from '@/components/BandCard'
 import { BandInsights } from '@/components/BandInsights'
+import { SaveBandButton } from '@/components/SaveBandButton'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 
 interface Props {
@@ -35,6 +36,16 @@ export default async function BandDetailPage({ params }: Props) {
 
   const { data: { user } } = await supabase.auth.getUser()
   const isOwner = !!user && user.id === band.user_id
+
+  const isSaved = user
+    ? await supabase
+        .from('saved_bands')
+        .select('band_id')
+        .eq('user_id', user.id)
+        .eq('band_id', id)
+        .maybeSingle()
+        .then(({ data }) => !!data)
+    : false
 
   const ownerProfile = band.user_id
     ? await supabaseAdmin
@@ -62,14 +73,17 @@ export default async function BandDetailPage({ params }: Props) {
         >
           <ArrowLeft className="w-4 h-4" /> Kembali
         </Link>
-        {isOwner && (
-          <Link
-            href={`/bands/${id}/edit`}
-            className="inline-flex items-center gap-1.5 text-sm border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-300 px-3 py-1.5 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors"
-          >
-            <Pencil className="w-3.5 h-3.5" /> Edit Band
-          </Link>
-        )}
+        <div className="flex items-center gap-2">
+          <SaveBandButton bandId={id} initialSaved={isSaved} isLoggedIn={!!user} />
+          {isOwner && (
+            <Link
+              href={`/bands/${id}/edit`}
+              className="inline-flex items-center gap-1.5 text-sm border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-300 px-3 py-1.5 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors"
+            >
+              <Pencil className="w-3.5 h-3.5" /> Edit Band
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="bg-[#fefaf4] dark:bg-[#231d15] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden">

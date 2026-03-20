@@ -9,9 +9,12 @@ interface Props {
   initialBands: Band[]
   initialHasMore: boolean
   filters: BandFilters
+  isLoggedIn?: boolean
+  savedBandIds?: string[]
 }
 
-export function LoadMoreBands({ initialBands, initialHasMore, filters }: Props) {
+export function LoadMoreBands({ initialBands, initialHasMore, filters, isLoggedIn, savedBandIds }: Props) {
+  const savedSet = new Set(savedBandIds ?? [])
   const [bands, setBands] = useState(initialBands)
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(initialHasMore)
@@ -73,7 +76,7 @@ export function LoadMoreBands({ initialBands, initialHasMore, filters }: Props) 
     <>
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {bands.map((band) => (
-          <BandCard key={band.id} band={band} />
+          <BandCard key={band.id} band={band} isLoggedIn={isLoggedIn} isSaved={savedSet.has(band.id)} />
         ))}
         {loading && Array.from({ length: 3 }).map((_, i) => (
           <CardSkeleton key={`skeleton-${i}`} />

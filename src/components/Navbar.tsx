@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { LogOut, LayoutDashboard, LogIn, ShieldCheck, Menu, X, MessageSquare, Settings } from 'lucide-react'
+import { LogOut, LayoutDashboard, LogIn, ShieldCheck, Menu, X, MessageSquare, Settings, Bookmark } from 'lucide-react'
 import { LogoBT } from './LogoBT'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/contexts/AuthContext'
@@ -66,6 +66,10 @@ export function Navbar() {
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                   </Link>
+                  <Link href="/saved" className="flex items-center gap-1.5 px-3 py-2 text-stone-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">
+                    <Bookmark className="w-4 h-4" />
+                    Tersimpan
+                  </Link>
                   <Link href="/submit" className="bg-amber-700 text-white px-4 py-1.5 rounded-lg hover:bg-amber-800 transition-colors">
                     Daftarkan Band
                   </Link>
@@ -125,6 +129,10 @@ export function Navbar() {
               <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors">
                 <LayoutDashboard className="w-4 h-4" />
                 Dashboard
+              </Link>
+              <Link href="/saved" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors">
+                <Bookmark className="w-4 h-4" />
+                Tersimpan
               </Link>
               <Link href="/submit" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors">
                 Daftarkan Band

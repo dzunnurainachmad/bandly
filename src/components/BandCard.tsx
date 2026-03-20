@@ -2,10 +2,17 @@ import Link from 'next/link'
 import { MapPin, Music, UserPlus } from 'lucide-react'
 import { Badge } from './ui/Badge'
 import { PlayButton } from './PlayButton'
+import { SaveBandButton } from './SaveBandButton'
 import { getYouTubeEmbedUrl, getSpotifyEmbedUrl, getSpotifyEmbedHeight, getAppleMusicEmbedUrl, getAppleMusicEmbedHeight } from '@/lib/embed'
 import type { Band } from '@/types'
 
-export function BandCard({ band }: { band: Band }) {
+interface BandCardProps {
+  band: Band
+  isLoggedIn?: boolean
+  isSaved?: boolean
+}
+
+export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
   const waLink = band.contact_wa ? `https://wa.me/${band.contact_wa}` : null
   const emailLink = band.contact_email ? `mailto:${band.contact_email}` : null
   const contactLink = waLink ?? emailLink
@@ -88,30 +95,31 @@ export function BandCard({ band }: { band: Band }) {
           </div>
         )}
 
-        {(band.instagram || contactLink) && (
-          <div className="mt-auto pt-4 flex gap-2">
-            {band.instagram && (
-              <a
-                href={`https://instagram.com/${band.instagram.replace('@', '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 text-center text-sm border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 px-3 py-1.5 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors"
-              >
-                Instagram
-              </a>
-            )}
-            {contactLink && (
-              <a
-                href={contactLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={contactStyle}
-              >
-                {contactLabel}
-              </a>
-            )}
-          </div>
-        )}
+        <div className="mt-auto pt-4 flex gap-2">
+          {band.instagram && (
+            <a
+              href={`https://instagram.com/${band.instagram.replace('@', '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 text-center text-sm border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 px-3 py-1.5 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors"
+            >
+              Instagram
+            </a>
+          )}
+          {contactLink && (
+            <a
+              href={contactLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={contactStyle}
+            >
+              {contactLabel}
+            </a>
+          )}
+          {isLoggedIn !== undefined && (
+            <SaveBandButton bandId={band.id} initialSaved={isSaved} isLoggedIn={isLoggedIn} variant="icon" />
+          )}
+        </div>
       </div>
     </div>
   )

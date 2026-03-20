@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Plus, Music, Settings } from 'lucide-react'
+import { Plus, Music, Settings, Bookmark } from 'lucide-react'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getUserBands } from '@/lib/queries'
@@ -51,7 +51,16 @@ export default async function DashboardPage() {
       </div>
 
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">Band Saya</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">Band Saya</h1>
+          <Link
+            href="/saved"
+            className="inline-flex items-center gap-1.5 text-sm border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 px-3 py-1.5 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors"
+          >
+            <Bookmark className="w-3.5 h-3.5" />
+            Tersimpan
+          </Link>
+        </div>
         <Link
           href="/submit"
           className="inline-flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"

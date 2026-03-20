@@ -3,17 +3,30 @@ import { Bone } from '@/components/ui/Skeleton'
 export default function BandDetailLoading() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <Bone className="h-4 w-24 mb-6" />
+      {/* Back + action buttons */}
+      <div className="flex items-center justify-between mb-6">
+        <Bone className="h-4 w-20" />
+        <div className="flex gap-2">
+          <Bone className="h-8 w-24 rounded-lg" />
+          <Bone className="h-8 w-24 rounded-lg" />
+        </div>
+      </div>
 
       <div className="bg-[#fefaf4] dark:bg-[#231d15] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden">
         <Bone className="aspect-video rounded-none" />
 
         <div className="p-4 sm:p-6 space-y-5">
           {/* Title + location */}
-          <div className="space-y-2">
-            <Bone className="h-8 w-2/3" />
-            <Bone className="h-4 w-1/3" />
-            <Bone className="h-4 w-1/4" />
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div className="space-y-2">
+              <Bone className="h-8 w-48" />
+              <Bone className="h-3 w-24" />
+              <Bone className="h-4 w-36" />
+              <Bone className="h-4 w-28" />
+            </div>
+            <div className="flex gap-2">
+              <Bone className="h-9 w-24 rounded-lg" />
+            </div>
           </div>
 
           {/* Genre badges */}
@@ -25,14 +38,14 @@ export default function BandDetailLoading() {
 
           {/* Bio */}
           <div className="space-y-2">
-            <Bone className="h-5 w-24" />
+            <Bone className="h-5 w-20" />
             <Bone className="h-4 w-full" />
             <Bone className="h-4 w-full" />
             <Bone className="h-4 w-3/4" />
           </div>
 
           {/* Player */}
-          <Bone className="h-48 w-full rounded-xl" />
+          <Bone className="h-52 w-full rounded-xl" />
 
           {/* Contact */}
           <div className="space-y-2">
