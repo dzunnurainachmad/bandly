@@ -29,31 +29,35 @@ export function ImageCropper({ src, onConfirm, onCancel, square = false }: Props
     img.src = src
   }, [src])
 
-  // Measure container
+  // Measure container with ResizeObserver — fires after layout, always accurate
   useEffect(() => {
-    if (!containerRef.current) return
-    const rect = containerRef.current.getBoundingClientRect()
-    setContainerSize({ w: rect.width, h: rect.height })
+    const el = containerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      // For square mode, derive height from width to guarantee equal dimensions
+      setContainerSize({ w: width, h: square ? width : height })
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  // square is stable after mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Set initial scale (cover) + center when both sizes are known
   useEffect(() => {
-    if (!imgNatural.w || !containerSize.w) return
-    const s = Math.max(containerSize.w / imgNatural.w, cH / imgNatural.h)
+    if (!imgNatural.w || !containerSize.w || !containerSize.h) return
+    const s = Math.max(containerSize.w / imgNatural.w, containerSize.h / imgNatural.h)
     setScale(s)
     setOffset({
       x: (containerSize.w - imgNatural.w * s) / 2,
-      y: (cH - imgNatural.h * s) / 2,
+      y: (containerSize.h - imgNatural.h * s) / 2,
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imgNatural, containerSize])
-
-  // When square=true, derive height from width to avoid CSS aspect-ratio timing issues
-  const cH = square ? containerSize.w : containerSize.h
 
   function minScale() {
     if (!imgNatural.w || !containerSize.w) return 1
-    return Math.max(containerSize.w / imgNatural.w, cH / imgNatural.h)
+    return Math.max(containerSize.w / imgNatural.w, containerSize.h / imgNatural.h)
   }
 
   function clamp(ox: number, oy: number, s: number) {
@@ -61,11 +65,11 @@ export function ImageCropper({ src, onConfirm, onCancel, square = false }: Props
     const imgH = imgNatural.h * s
     return {
       x: Math.min(0, Math.max(containerSize.w - imgW, ox)),
-      y: Math.min(0, Math.max(cH - imgH, oy)),
+      y: Math.min(0, Math.max(containerSize.h - imgH, oy)),
     }
   }
 
-  function applyZoom(factor: number, pivotX = containerSize.w / 2, pivotY = cH / 2) {
+  function applyZoom(factor: number, pivotX = containerSize.w / 2, pivotY = containerSize.h / 2) {
     const newScale = Math.max(minScale(), Math.min(5, scale * factor))
     const ratio = newScale / scale
     const newOffset = clamp(
@@ -137,11 +141,14 @@ export function ImageCropper({ src, onConfirm, onCancel, square = false }: Props
     img.src = src
     await new Promise<void>((res) => { img.onload = () => res() })
 
-    // Convert container-space offset back to source-image coordinates
+    // For square mode: measure container width from DOM at confirm time and use it
+    // for both dimensions — guarantees no squishing regardless of state timing.
+    const cW = containerRef.current ? containerRef.current.offsetWidth : containerSize.w
+    const srcW = cW / scale
+    const srcH = square ? srcW : (containerSize.h / scale)
+
     const srcX = -offset.x / scale
     const srcY = -offset.y / scale
-    const srcW = containerSize.w / scale
-    const srcH = cH / scale
 
     ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, OUT_W, OUT_H)
 
