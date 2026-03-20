@@ -7,6 +7,12 @@ import type { Band } from '@/types'
 
 export function BandCard({ band }: { band: Band }) {
   const waLink = band.contact_wa ? `https://wa.me/${band.contact_wa}` : null
+  const emailLink = band.contact_email ? `mailto:${band.contact_email}` : null
+  const contactLink = waLink ?? emailLink
+  const contactLabel = waLink ? 'WhatsApp' : 'Email'
+  const contactStyle = waLink
+    ? 'flex-1 text-center text-sm border border-emerald-500 text-emerald-600 px-3 py-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors'
+    : 'flex-1 text-center text-sm border border-sky-500 text-sky-600 px-3 py-1.5 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors'
   const youtubeEmbed = (band.youtube ? getYouTubeEmbedUrl(band.youtube) : null)
     ?? (band.youtube_music ? getYouTubeEmbedUrl(band.youtube_music) : null)
   const spotifyEmbed = band.spotify ? getSpotifyEmbedUrl(band.spotify) : null
@@ -82,7 +88,7 @@ export function BandCard({ band }: { band: Band }) {
           </div>
         )}
 
-        {(band.instagram || waLink) && (
+        {(band.instagram || contactLink) && (
           <div className="mt-auto pt-4 flex gap-2">
             {band.instagram && (
               <a
@@ -94,14 +100,14 @@ export function BandCard({ band }: { band: Band }) {
                 Instagram
               </a>
             )}
-            {waLink && (
+            {contactLink && (
               <a
-                href={waLink}
+                href={contactLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 text-center text-sm border border-emerald-500 text-emerald-600 px-3 py-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+                className={contactStyle}
               >
-                WhatsApp
+                {contactLabel}
               </a>
             )}
           </div>

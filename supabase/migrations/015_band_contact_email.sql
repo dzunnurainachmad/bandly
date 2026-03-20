@@ -6,7 +6,8 @@ alter table bands
   add column if not exists contact_email text;
 
 -- Refresh bands_view to include contact_email
-create or replace view bands_view as
+drop view if exists bands_view cascade;
+create view bands_view as
 select
   b.id,
   b.user_id,
@@ -41,3 +42,85 @@ left join cities     c  on c.id  = b.city_id
 left join band_genres bg on bg.band_id = b.id
 left join genres     g  on g.id  = bg.genre_id
 group by b.id, p.name, p.slug, c.name, c.slug;
+
+-- Recreate functions that depend on bands_view (dropped by cascade above)
+create or replace function search_bands_semantic(
+  query_embedding vector(1536),
+  match_threshold float default 0.3,
+  match_count int default 10
+)
+returns setof bands_view
+language plpgsql
+as $$
+begin
+  return query
+  select bv.*
+  from bands b
+  join bands_view bv on bv.id = b.id
+  where b.embedding is not null
+    and 1 - (b.embedding <=> query_embedding) >= match_threshold
+  order by b.embedding <=> query_embedding
+  limit match_count;
+end;
+$$;
+
+create or replace function get_similar_bands(
+  band_id uuid,
+  match_count int default 6
+)
+returns setof bands_view
+language plpgsql
+as $$
+declare
+  source_embedding vector(1536);
+begin
+  select b.embedding into source_embedding
+  from bands b
+  where b.id = band_id;
+
+  if source_embedding is null then
+    return;
+  end if;
+
+  return query
+  select bv.*
+  from bands b
+  join bands_view bv on bv.id = b.id
+  where b.id != band_id
+    and b.embedding is not null
+  order by b.embedding <=> source_embedding
+  limit match_count;
+end;
+$$;
+
+create or replace function filter_bands_by_genre(
+  genre_ids int[],
+  province_filter int default null,
+  city_filter int default null,
+  looking_for_members boolean default null,
+  search_term text default null,
+  page_offset int default 0,
+  page_limit int default 13
+)
+returns setof bands_view
+language plpgsql
+as $$
+begin
+  return query
+  select bv.*
+  from bands_view bv
+  where bv.id in (
+    select distinct bg.band_id
+    from band_genres bg
+    join bands b on b.id = bg.band_id
+    where bg.genre_id = any(genre_ids)
+      and (province_filter is null or b.province_id = province_filter)
+      and (city_filter is null or b.city_id = city_filter)
+      and (looking_for_members is null or b.is_looking_for_members = looking_for_members)
+      and (search_term is null or b.name ilike '%' || search_term || '%')
+  )
+  order by bv.created_at desc
+  offset page_offset
+  limit page_limit;
+end;
+$$;
