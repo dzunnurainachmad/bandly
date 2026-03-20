@@ -39,17 +39,21 @@ export function ImageCropper({ src, onConfirm, onCancel, square = false }: Props
   // Set initial scale (cover) + center when both sizes are known
   useEffect(() => {
     if (!imgNatural.w || !containerSize.w) return
-    const s = Math.max(containerSize.w / imgNatural.w, containerSize.h / imgNatural.h)
+    const s = Math.max(containerSize.w / imgNatural.w, cH / imgNatural.h)
     setScale(s)
     setOffset({
       x: (containerSize.w - imgNatural.w * s) / 2,
-      y: (containerSize.h - imgNatural.h * s) / 2,
+      y: (cH - imgNatural.h * s) / 2,
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imgNatural, containerSize])
+
+  // When square=true, derive height from width to avoid CSS aspect-ratio timing issues
+  const cH = square ? containerSize.w : containerSize.h
 
   function minScale() {
     if (!imgNatural.w || !containerSize.w) return 1
-    return Math.max(containerSize.w / imgNatural.w, containerSize.h / imgNatural.h)
+    return Math.max(containerSize.w / imgNatural.w, cH / imgNatural.h)
   }
 
   function clamp(ox: number, oy: number, s: number) {
@@ -57,11 +61,11 @@ export function ImageCropper({ src, onConfirm, onCancel, square = false }: Props
     const imgH = imgNatural.h * s
     return {
       x: Math.min(0, Math.max(containerSize.w - imgW, ox)),
-      y: Math.min(0, Math.max(containerSize.h - imgH, oy)),
+      y: Math.min(0, Math.max(cH - imgH, oy)),
     }
   }
 
-  function applyZoom(factor: number, pivotX = containerSize.w / 2, pivotY = containerSize.h / 2) {
+  function applyZoom(factor: number, pivotX = containerSize.w / 2, pivotY = cH / 2) {
     const newScale = Math.max(minScale(), Math.min(5, scale * factor))
     const ratio = newScale / scale
     const newOffset = clamp(
@@ -137,7 +141,7 @@ export function ImageCropper({ src, onConfirm, onCancel, square = false }: Props
     const srcX = -offset.x / scale
     const srcY = -offset.y / scale
     const srcW = containerSize.w / scale
-    const srcH = containerSize.h / scale
+    const srcH = cH / scale
 
     ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, OUT_W, OUT_H)
 
