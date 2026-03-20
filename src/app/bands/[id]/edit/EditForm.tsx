@@ -33,6 +33,7 @@ export function EditForm({ band }: Props) {
     province_id: band.province_id ? String(band.province_id) : '',
     city_id: band.city_id ? String(band.city_id) : '',
     contact_wa: band.contact_wa ?? '',
+    contact_email: band.contact_email ?? '',
     instagram: band.instagram ?? '',
     youtube: band.youtube ?? '',
     spotify: band.spotify ?? '',
@@ -129,6 +130,7 @@ export function EditForm({ band }: Props) {
         province_id: form.province_id ? Number(form.province_id) : null,
         city_id: form.city_id ? Number(form.city_id) : null,
         contact_wa: form.contact_wa || null,
+        contact_email: form.contact_email || null,
         instagram: form.instagram || null,
         youtube: form.youtube || null,
         spotify: form.spotify || null,
@@ -294,6 +296,12 @@ export function EditForm({ band }: Props) {
           <span className="inline-flex items-center px-3 border border-r-0 border-stone-300 dark:border-stone-600 rounded-l-lg bg-stone-50 dark:bg-stone-700 text-stone-500 dark:text-stone-400 text-sm">+62</span>
           <input type="text" value={form.contact_wa.replace(/^62/, '')} onChange={(e) => set('contact_wa', '62' + e.target.value.replace(/^0/, ''))} className="flex-1 border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 rounded-r-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="8123456789" />
         </div>
+      </div>
+
+      {/* Email */}
+      <div>
+        <label className={labelClass}>Email Kontak</label>
+        <input type="email" value={form.contact_email} onChange={(e) => set('contact_email', e.target.value)} className={inputClass} placeholder="band@email.com" />
       </div>
 
       {/* Social */}

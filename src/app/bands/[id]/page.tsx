@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Calendar, Instagram, Music, UserPlus, ArrowLeft, Pencil, ExternalLink } from 'lucide-react'
+import { MapPin, Calendar, Instagram, Music, UserPlus, ArrowLeft, Pencil, ExternalLink, Mail } from 'lucide-react'
 
 function YoutubeIcon({ className }: { className?: string }) {
   return (
@@ -279,6 +279,14 @@ export default async function BandDetailPage({ params }: Props) {
                   className="flex items-center gap-2 bg-emerald-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-emerald-600 transition-colors text-xs sm:text-sm font-medium"
                 >
                   Hubungi via WhatsApp
+                </a>
+              )}
+              {band.contact_email && (
+                <a
+                  href={`mailto:${band.contact_email}`}
+                  className="flex items-center gap-2 border border-stone-300 dark:border-stone-600 text-stone-700 dark:text-stone-300 px-4 py-2 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-sm"
+                >
+                  <Mail className="w-4 h-4" /> Email
                 </a>
               )}
               {band.instagram && (

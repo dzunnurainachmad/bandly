@@ -25,6 +25,7 @@ export interface Band {
   province_id: number | null
   city_id: number | null
   contact_wa: string | null
+  contact_email: string | null
   instagram: string | null
   youtube: string | null
   spotify: string | null

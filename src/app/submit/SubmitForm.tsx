@@ -34,6 +34,7 @@ export function SubmitForm() {
     province_id: '',
     city_id: '',
     contact_wa: '',
+    contact_email: '',
     instagram: '',
     youtube: '',
     spotify: '',
@@ -150,6 +151,7 @@ export function SubmitForm() {
         province_id: form.province_id ? Number(form.province_id) : undefined,
         city_id: form.city_id ? Number(form.city_id) : undefined,
         contact_wa: form.contact_wa || undefined,
+        contact_email: form.contact_email || undefined,
         instagram: form.instagram || undefined,
         youtube: form.youtube || undefined,
         spotify: form.spotify || undefined,
@@ -500,6 +502,18 @@ export function SubmitForm() {
             placeholder="8123456789"
           />
         </div>
+      </div>
+
+      {/* Email */}
+      <div>
+        <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Email Kontak</label>
+        <input
+          type="email"
+          value={form.contact_email}
+          onChange={(e) => set('contact_email', e.target.value)}
+          className={inputClass}
+          placeholder="band@email.com"
+        />
       </div>
 
       {/* Social */}

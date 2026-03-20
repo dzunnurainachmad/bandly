@@ -24,6 +24,7 @@ function makeBand(overrides: Partial<Band> = {}): Band {
     province_id: null,
     city_id: null,
     contact_wa: null,
+    contact_email: null,
     instagram: null,
     youtube: null,
     spotify: null,

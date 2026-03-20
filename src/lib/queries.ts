@@ -157,6 +157,7 @@ export async function createBand(band: {
   province_id?: number
   city_id?: number
   contact_wa?: string
+  contact_email?: string
   instagram?: string
   youtube?: string
   spotify?: string
@@ -208,6 +209,7 @@ export async function updateBand(id: string, band: {
   province_id?: number | null
   city_id?: number | null
   contact_wa?: string | null
+  contact_email?: string | null
   instagram?: string | null
   youtube?: string | null
   spotify?: string | null
