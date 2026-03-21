@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Input } from '@/components/ui/Input'
+import { Checkbox } from '@/components/ui/Checkbox'
 
 function GoogleIcon() {
   return (
@@ -95,9 +97,6 @@ export function LoginForm() {
     setLoading(false)
   }
 
-  const inputClass =
-    'w-full border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
-
   return (
     <div className="bg-[#fefaf4] dark:bg-[#231d15] border border-stone-200 dark:border-stone-700 rounded-2xl p-6 space-y-5">
       {/* Mode toggle */}
@@ -136,17 +135,14 @@ export function LoginForm() {
           <p className="text-sm text-stone-500 dark:text-stone-400">
             Masukkan email kamu dan kami akan kirimkan link untuk reset password.
           </p>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={`${inputClass} pl-9`}
-            />
-          </div>
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            leftIcon={<Mail className="w-4 h-4" />}
+          />
           {error && (
             <p className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
               {error}
@@ -185,38 +181,34 @@ export function LoginForm() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className={`${inputClass} pl-9`}
-              />
-            </div>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              leftIcon={<Mail className="w-4 h-4" />}
+            />
 
             <div className="space-y-1">
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className={`${inputClass} pl-9 pr-10`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                leftIcon={<Lock className="w-4 h-4" />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="hover:text-stone-600"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                }
+              />
               {mode === 'login' && (
                 <div className="text-right">
                   <button
@@ -231,13 +223,11 @@ export function LoginForm() {
             </div>
 
             {mode === 'register' && (
-              <label className="flex items-start gap-2.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={agreedToTerms}
-                  onChange={(e) => setAgreedToTerms(e.target.checked)}
-                  className="rounded text-amber-700 w-4 h-4 mt-0.5 shrink-0"
-                />
+              <Checkbox
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                align="start"
+              >
                 <span className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
                   Saya menyetujui{' '}
                   <Link href="/terms" target="_blank" className="text-amber-700 dark:text-amber-500 underline hover:text-amber-800">
@@ -245,7 +235,7 @@ export function LoginForm() {
                   </Link>{' '}
                   BandTelusur
                 </span>
-              </label>
+              </Checkbox>
             )}
 
             {error && (

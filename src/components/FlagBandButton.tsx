@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Flag } from 'lucide-react'
+import { TextArea } from '@/components/ui/TextArea'
 
 export function FlagBandButton({ bandId }: { bandId: string }) {
   const [open, setOpen] = useState(false)
@@ -46,14 +47,14 @@ export function FlagBandButton({ bandId }: { bandId: string }) {
       ) : (
         <div className="mt-2 space-y-2 p-3 border border-stone-200 dark:border-stone-700 rounded-lg bg-stone-50 dark:bg-stone-800/50">
           <p className="text-xs font-medium text-stone-600 dark:text-stone-400">Alasan laporan (opsional)</p>
-          <textarea
+          <TextArea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             rows={2}
             placeholder="Konten melanggar, band duplikat, dll."
-            className="w-full text-xs border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-1 focus:ring-amber-500"
+            error={error || undefined}
+            className="text-xs px-2 py-1.5"
           />
-          {error && <p className="text-xs text-red-500">{error}</p>}
           <div className="flex gap-2">
             <button
               onClick={handleSubmit}

@@ -6,6 +6,8 @@ import { getProvinces, getGenres, getCitiesByProvince } from '@/lib/queries'
 import type { Province, City, Genre } from '@/types'
 import { Select } from '@/components/ui/Select'
 import { MultiSelect } from '@/components/ui/MultiSelect'
+import { Input } from '@/components/ui/Input'
+import { Checkbox } from '@/components/ui/Checkbox'
 import { Search, SlidersHorizontal, X, Loader2, ChevronDown } from 'lucide-react'
 import { useFilterLoading } from './FilterLoadingContext'
 
@@ -140,26 +142,23 @@ export function FilterBar() {
         mobileOpen ? 'mt-4' : 'hidden md:block'
       }`}>
         {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-          <input
-            ref={searchRef}
-            type="text"
-            placeholder="Cari nama band..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
-            className="w-full pl-9 pr-8 py-2.5 border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 rounded-lg text-sm focus:outline-none focus:border-amber-500"
-          />
-          {search && (
+        <Input
+          ref={searchRef}
+          type="text"
+          placeholder="Cari nama band..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
+          leftIcon={<Search className="w-4 h-4" />}
+          rightIcon={search ? (
             <button
               onClick={() => { setSearch(''); navigate(buildURL({ q: '' })) }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 p-1"
+              className="hover:text-stone-600 p-1"
             >
               <X className="w-3.5 h-3.5" />
             </button>
-          )}
-        </div>
+          ) : undefined}
+        />
 
         {/* Province */}
         <Select
@@ -192,15 +191,13 @@ export function FilterBar() {
         />
 
         {/* Looking for members */}
-        <label className="flex items-center gap-2.5 text-sm text-stone-700 dark:text-stone-300 cursor-pointer select-none py-1">
-          <input
-            type="checkbox"
-            checked={lookingForMembers}
-            onChange={(e) => handleOpenChange(e.target.checked)}
-            className="rounded text-amber-700 w-4 h-4"
-          />
-          Buka lowongan member
-        </label>
+        <Checkbox
+          checked={lookingForMembers}
+          onChange={(e) => handleOpenChange(e.target.checked)}
+          className="py-1"
+        >
+          <span className="text-sm text-stone-700 dark:text-stone-300 select-none">Buka lowongan member</span>
+        </Checkbox>
       </div>
     </div>
   )

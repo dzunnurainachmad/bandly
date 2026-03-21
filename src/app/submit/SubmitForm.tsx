@@ -6,6 +6,9 @@ import { ImagePlus, Sparkles, X, Globe, Loader2 } from 'lucide-react'
 import type { SubmitBandAgentResult } from '@/lib/schemas'
 import { getProvinces, getCitiesByProvince, getGenres, createBand, uploadBandPhoto } from '@/lib/queries'
 import { Select } from '@/components/ui/Select'
+import { Input } from '@/components/ui/Input'
+import { Checkbox } from '@/components/ui/Checkbox'
+import { TextArea } from '@/components/ui/TextArea'
 import { ImageCropper } from '@/components/ui/ImageCropper'
 import type { Province, City, Genre } from '@/types'
 
@@ -258,8 +261,6 @@ export function SubmitForm() {
     }
   }
 
-  const inputClass =
-    'w-full border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
 
   const submitLabel = uploading
     ? 'Mengupload foto...'
@@ -279,13 +280,14 @@ export function SubmitForm() {
           Tempel link website atau halaman Facebook/YouTube band — AI akan mengisi formulir secara otomatis.
         </p>
         <div className="flex gap-2">
-          <input
-            type="url"
-            value={fillUrl}
-            onChange={(e) => setFillUrl(e.target.value)}
-            placeholder="https://..."
-            className={inputClass + ' flex-1'}
-          />
+          <div className="flex-1 min-w-0">
+            <Input
+              type="url"
+              value={fillUrl}
+              onChange={(e) => setFillUrl(e.target.value)}
+              placeholder="https://..."
+            />
+          </div>
           <button
             type="button"
             onClick={handleFillFromUrl}
@@ -397,11 +399,10 @@ export function SubmitForm() {
         <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
           Nama Band / Project <span className="text-red-500">*</span>
         </label>
-        <input
+        <Input
           type="text"
           value={form.name}
           onChange={(e) => set('name', e.target.value)}
-          className={inputClass}
           placeholder="Contoh: Burgerkill, Padi Reborn"
         />
       </div>
@@ -420,12 +421,11 @@ export function SubmitForm() {
             {isGenerating ? 'Generating...' : 'Generate dengan AI'}
           </button>
         </div>
-        <textarea
+        <TextArea
           value={form.bio}
           onChange={(e) => set('bio', e.target.value)}
           readOnly={isGenerating}
           rows={3}
-          className={inputClass}
           placeholder="Ceritakan sedikit tentang band kamu..."
         />
       </div>
@@ -433,13 +433,12 @@ export function SubmitForm() {
       {/* Formed year */}
       <div>
         <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Tahun Berdiri</label>
-        <input
+        <Input
           type="text"
           inputMode="numeric"
           pattern="[0-9]*"
           value={form.formed_year}
           onChange={(e) => { if (/^\d{0,4}$/.test(e.target.value)) set('formed_year', e.target.value) }}
-          className={inputClass}
           placeholder="2010"
           maxLength={4}
         />
@@ -507,11 +506,10 @@ export function SubmitForm() {
       {/* Email */}
       <div>
         <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Email Kontak</label>
-        <input
+        <Input
           type="email"
           value={form.contact_email}
           onChange={(e) => set('contact_email', e.target.value)}
-          className={inputClass}
           placeholder="band@email.com"
         />
       </div>
@@ -520,78 +518,39 @@ export function SubmitForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <div>
           <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Instagram</label>
-          <input
-            type="text"
-            value={form.instagram}
-            onChange={(e) => set('instagram', e.target.value)}
-            className={inputClass}
-            placeholder="@bandkamu"
-          />
+          <Input type="text" value={form.instagram} onChange={(e) => set('instagram', e.target.value)} placeholder="@bandkamu" />
         </div>
         <div>
           <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">YouTube URL</label>
-          <input
-            type="text"
-            value={form.youtube}
-            onChange={(e) => set('youtube', e.target.value)}
-            className={inputClass}
-            placeholder="youtube.com/c/..."
-          />
+          <Input type="text" value={form.youtube} onChange={(e) => set('youtube', e.target.value)} placeholder="youtube.com/c/..." />
         </div>
         <div>
           <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Spotify URL</label>
-          <input
-            type="text"
-            value={form.spotify}
-            onChange={(e) => set('spotify', e.target.value)}
-            className={inputClass}
-            placeholder="open.spotify.com/artist/..."
-          />
+          <Input type="text" value={form.spotify} onChange={(e) => set('spotify', e.target.value)} placeholder="open.spotify.com/artist/..." />
         </div>
         <div>
           <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">YouTube Music URL</label>
-          <input
-            type="text"
-            value={form.youtube_music}
-            onChange={(e) => set('youtube_music', e.target.value)}
-            className={inputClass}
-            placeholder="music.youtube.com/channel/..."
-          />
+          <Input type="text" value={form.youtube_music} onChange={(e) => set('youtube_music', e.target.value)} placeholder="music.youtube.com/channel/..." />
         </div>
         <div>
           <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Apple Music URL</label>
-          <input
-            type="text"
-            value={form.apple_music}
-            onChange={(e) => set('apple_music', e.target.value)}
-            className={inputClass}
-            placeholder="music.apple.com/id/artist/..."
-          />
+          <Input type="text" value={form.apple_music} onChange={(e) => set('apple_music', e.target.value)} placeholder="music.apple.com/id/artist/..." />
         </div>
         <div>
           <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Bandcamp URL</label>
-          <input
-            type="text"
-            value={form.bandcamp}
-            onChange={(e) => set('bandcamp', e.target.value)}
-            className={inputClass}
-            placeholder="bandname.bandcamp.com"
-          />
+          <Input type="text" value={form.bandcamp} onChange={(e) => set('bandcamp', e.target.value)} placeholder="bandname.bandcamp.com" />
         </div>
       </div>
 
       {/* Looking for members */}
-      <label className="flex items-center gap-3 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={form.is_looking_for_members}
-          onChange={(e) => set('is_looking_for_members', e.target.checked)}
-          className="rounded text-amber-700 w-4 h-4"
-        />
+      <Checkbox
+        checked={form.is_looking_for_members}
+        onChange={(e) => set('is_looking_for_members', e.target.checked)}
+      >
         <span className="text-sm text-stone-700 dark:text-stone-300">
           Band kami sedang membuka lowongan untuk member baru
         </span>
-      </label>
+      </Checkbox>
 
       {error && (
         <p className="text-red-600 text-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">

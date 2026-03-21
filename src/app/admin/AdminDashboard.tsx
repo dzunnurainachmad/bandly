@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Users, Music, ShieldX, ShieldCheck, Trash2, Search, Flag, BarChart2 } from 'lucide-react'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 import { deleteBand } from '@/lib/queries'
+import { Input } from '@/components/ui/Input'
 
 interface Profile {
   id: string
@@ -104,14 +105,13 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
       </div>
 
       {/* Search */}
-      <div className="relative mb-4 max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-        <input
+      <div className="mb-4 max-w-sm">
+        <Input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={tab === 'users' ? 'Cari email...' : 'Cari nama band...'}
-          className="w-full pl-9 pr-3 py-2 border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+          leftIcon={<Search className="w-4 h-4" />}
         />
       </div>
 
@@ -150,12 +150,12 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
                   </td>
                   <td className="px-4 py-3">
                     {!user.is_banned && (
-                      <input
+                      <Input
                         type="text"
                         placeholder="Alasan ban..."
                         value={banReason[user.id] ?? ''}
                         onChange={(e) => setBanReason((r) => ({ ...r, [user.id]: e.target.value }))}
-                        className="text-xs border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-700 dark:text-stone-300 rounded-lg px-2 py-1 w-full min-w-24 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        className="text-xs px-2 py-1 min-w-24"
                       />
                     )}
                     {user.is_banned && (

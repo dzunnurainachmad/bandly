@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 import { Lock, Eye, EyeOff } from 'lucide-react'
+import { Input } from '@/components/ui/Input'
 
 export default function ResetPasswordPage() {
   const router = useRouter()
@@ -35,9 +36,6 @@ export default function ResetPasswordPage() {
     }
   }
 
-  const inputClass =
-    'w-full border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
-
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
@@ -53,25 +51,24 @@ export default function ResetPasswordPage() {
             <p className="text-sm text-center text-stone-400 py-4">Memverifikasi link...</p>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Password baru"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className={`${inputClass} pl-9 pr-10`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password baru"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                leftIcon={<Lock className="w-4 h-4" />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="hover:text-stone-600"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                }
+              />
 
               {error && (
                 <p className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
