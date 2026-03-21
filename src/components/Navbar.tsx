@@ -167,24 +167,27 @@ export function Navbar() {
             <span className="text-[10px] font-medium text-amber-700">Daftar</span>
           </Link>
 
-          {!loading && (
-            user ? (
-              <>
-                <Link href="/saved" className={bottomTabClass('/saved')}>
-                  <Bookmark className="w-5 h-5" />
-                  <span className="text-[10px] font-medium">Tersimpan</span>
-                </Link>
-                <Link href="/dashboard" className={bottomTabClass('/dashboard')}>
-                  <LayoutDashboard className="w-5 h-5" />
-                  <span className="text-[10px] font-medium">Dashboard</span>
-                </Link>
-              </>
-            ) : (
-              <Link href="/login" className={bottomTabClass('/login')}>
-                <LogIn className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Masuk</span>
+          {loading ? (
+            // Placeholder during auth load — same slot count as logged-out state
+            <div className="flex flex-1 items-center justify-center opacity-0 pointer-events-none">
+              <LogIn className="w-5 h-5" />
+            </div>
+          ) : user ? (
+            <>
+              <Link href="/saved" className={bottomTabClass('/saved')}>
+                <Bookmark className="w-5 h-5" />
+                <span className="text-[10px] font-medium">Tersimpan</span>
               </Link>
-            )
+              <Link href="/dashboard" className={bottomTabClass('/dashboard')}>
+                <LayoutDashboard className="w-5 h-5" />
+                <span className="text-[10px] font-medium">Dashboard</span>
+              </Link>
+            </>
+          ) : (
+            <Link href="/login" className={bottomTabClass('/login')}>
+              <LogIn className="w-5 h-5" />
+              <span className="text-[10px] font-medium">Masuk</span>
+            </Link>
           )}
         </div>
       </nav>

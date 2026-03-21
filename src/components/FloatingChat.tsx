@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { X, Send, Bot, Maximize2, Trash2, Sparkles } from 'lucide-react'
 import { usePlayer } from '@/contexts/PlayerContext'
+import { useAuth } from '@/contexts/AuthContext'
 import type { UIMessage } from '@ai-sdk/react'
 import type { Band } from '@/types'
 
@@ -21,6 +22,7 @@ function loadMessages(): UIMessage[] {
 
 export function FloatingChat() {
   const pathname = usePathname()
+  const { user, loading } = useAuth()
   const { track } = usePlayer()
   const [open, setOpen] = useState(false)
   const { messages, sendMessage, status, setMessages } = useChat()
@@ -54,8 +56,8 @@ export function FloatingChat() {
     localStorage.removeItem(STORAGE_KEY)
   }
 
-  // Hide on the full chat page
-  if (pathname === '/chat') return null
+  // Hide on the full chat page or if not logged in
+  if (pathname === '/chat' || loading || !user) return null
 
   // Lift button above MiniPlayer when it's active
   const bottomOffset = track ? 'bottom-20' : 'bottom-6'
