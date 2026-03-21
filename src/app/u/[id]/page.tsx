@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { Music } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getUserBands } from '@/lib/queries'
 import { BandCard } from '@/components/BandCard'
@@ -39,13 +40,13 @@ async function getProfile(slug: string) {
 
 export default async function PublicProfilePage({ params }: Props) {
   const { id } = await params
-  const profile = await getProfile(id)
+  const [profile, t] = await Promise.all([getProfile(id), getTranslations('publicProfile')])
 
   if (!profile) notFound()
 
   const { bands } = await getUserBands(profile.id)
 
-  const displayName = profile.display_name ?? 'Pengguna'
+  const displayName = profile.display_name ?? t('defaultUser')
   const initials = displayName.slice(0, 2).toUpperCase()
 
   return (
@@ -78,11 +79,11 @@ export default async function PublicProfilePage({ params }: Props) {
       {/* Bands */}
       <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-200 mb-4 flex items-center gap-2">
         <Music className="w-5 h-5 text-amber-600" />
-        Band Terdaftar ({bands.length})
+        {t('registeredBands', { count: bands.length })}
       </h2>
 
       {bands.length === 0 ? (
-        <p className="text-stone-400 dark:text-stone-500 text-sm">Belum ada band terdaftar.</p>
+        <p className="text-stone-400 dark:text-stone-500 text-sm">{t('noBands')}</p>
       ) : (
         <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {bands.map((band) => (

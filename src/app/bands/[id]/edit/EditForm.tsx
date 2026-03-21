@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { ImagePlus, Sparkles, X } from 'lucide-react'
 import { getProvinces, getCitiesByProvince, getGenres, updateBand, uploadBandPhoto } from '@/lib/queries'
 import { Select } from '@/components/ui/Select'
@@ -10,6 +11,7 @@ import { Checkbox } from '@/components/ui/Checkbox'
 import { TextArea } from '@/components/ui/TextArea'
 import { ImageCropper } from '@/components/ui/ImageCropper'
 import { DeleteBandButton } from '@/components/DeleteBandButton'
+import { Button } from '@/components/ui/Button'
 import type { Band, Province, City, Genre } from '@/types'
 
 interface Props { band: Band }
@@ -17,6 +19,8 @@ interface Props { band: Band }
 export function EditForm({ band }: Props) {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const t = useTranslations('editBand')
+  const f = useTranslations('bandForm')
 
   const [provinces, setProvinces] = useState<Province[]>([])
   const [cities, setCities] = useState<City[]>([])
@@ -50,12 +54,9 @@ export function EditForm({ band }: Props) {
   useEffect(() => {
     getProvinces().then(setProvinces)
     getGenres().then(setGenres)
-    if (band.province_id) {
-      getCitiesByProvince(band.province_id).then(setCities)
-    }
+    if (band.province_id) getCitiesByProvince(band.province_id).then(setCities)
   }, [band.province_id])
 
-  // Load cities when province changes (but not on initial mount)
   const isFirstRender = useRef(true)
   useEffect(() => {
     if (isFirstRender.current) { isFirstRender.current = false; return }
@@ -76,16 +77,14 @@ export function EditForm({ band }: Props) {
   function toggleGenre(id: number) {
     setFormState((f) => ({
       ...f,
-      genre_ids: f.genre_ids.includes(id)
-        ? f.genre_ids.filter((g) => g !== id)
-        : [...f.genre_ids, id],
+      genre_ids: f.genre_ids.includes(id) ? f.genre_ids.filter((g) => g !== id) : [...f.genre_ids, id],
     }))
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 5 * 1024 * 1024) { setError('Ukuran foto maksimal 5 MB.'); return }
+    if (file.size > 5 * 1024 * 1024) { setError(t('errors.photoSize')); return }
     setCropSrc(URL.createObjectURL(file))
     setError('')
     if (fileInputRef.current) fileInputRef.current.value = ''
@@ -112,7 +111,7 @@ export function EditForm({ band }: Props) {
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!form.name.trim()) return setError('Nama band wajib diisi.')
+    if (!form.name.trim()) return setError(t('errors.nameRequired'))
     setSubmitting(true)
     setError('')
 
@@ -149,7 +148,7 @@ export function EditForm({ band }: Props) {
       router.push(`/bands/${band.id}`)
       router.refresh()
     } catch (err) {
-      setError((err as Error).message ?? 'Terjadi kesalahan.')
+      setError((err as Error).message ?? t('errors.genericError'))
       setSubmitting(false)
       setUploading(false)
     }
@@ -158,10 +157,7 @@ export function EditForm({ band }: Props) {
   const [isGenerating, setIsGenerating] = useState(false)
 
   async function handleGenerateBio() {
-    if (!form.name.trim()) {
-      setError('Isi nama band dulu sebelum generate bio.')
-      return
-    }
+    if (!form.name.trim()) { setError(t('errors.bioNameRequired')); return }
     setError('')
     setIsGenerating(true)
     set('bio', '')
@@ -175,20 +171,14 @@ export function EditForm({ band }: Props) {
       const res = await fetch('/api/generate-bio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          genre: selectedGenres,
-          formedYear: form.formed_year,
-          location,
-        }),
+        body: JSON.stringify({ name: form.name, genre: selectedGenres, formedYear: form.formed_year, location }),
       })
 
-      if (!res.ok) throw new Error('Gagal generate bio.')
+      if (!res.ok) throw new Error()
 
       const reader = res.body!.getReader()
       const decoder = new TextDecoder()
       let bio = ''
-
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
@@ -196,30 +186,35 @@ export function EditForm({ band }: Props) {
         set('bio', bio)
       }
     } catch {
-      setError('Gagal generate bio. Coba lagi.')
+      setError(t('errors.bioFailed'))
     } finally {
       setIsGenerating(false)
     }
   }
 
   const labelClass = 'block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1'
-  const submitLabel = uploading ? 'Mengupload foto...' : submitting ? 'Menyimpan...' : 'Simpan Perubahan'
+  const submitLabel = uploading ? t('uploading') : submitting ? t('saving') : t('saveBtn')
+
+  const socialFields = [
+    { label: f('instagram'), field: 'instagram', placeholder: '@bandkamu' },
+    { label: f('youtubeUrl'), field: 'youtube', placeholder: 'youtube.com/c/...' },
+    { label: f('spotifyUrl'), field: 'spotify', placeholder: 'open.spotify.com/artist/...' },
+    { label: f('youtubeMusicUrl'), field: 'youtube_music', placeholder: 'music.youtube.com/channel/...' },
+    { label: f('appleMusicUrl'), field: 'apple_music', placeholder: 'music.apple.com/id/artist/...' },
+    { label: f('bandcampUrl'), field: 'bandcamp', placeholder: 'bandname.bandcamp.com' },
+  ]
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 bg-[#fefaf4] dark:bg-[#231d15] border border-stone-200 dark:border-stone-700 rounded-2xl p-4 sm:p-6">
 
       {/* Photo */}
       <div>
-        <label className={`${labelClass} mb-2`}>Foto Band</label>
+        <label className={`${labelClass} mb-2`}>{f('photo')}</label>
         {photoPreview ? (
           <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
-            <button
-              type="button"
-              onClick={removePhoto}
-              className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1 hover:bg-black/80 transition-colors"
-            >
+            <button type="button" onClick={removePhoto} className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1 hover:bg-black/80 transition-colors">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -230,8 +225,8 @@ export function EditForm({ band }: Props) {
             className="w-full aspect-video rounded-xl border-2 border-dashed border-stone-300 dark:border-stone-600 flex flex-col items-center justify-center gap-2 text-stone-400 dark:text-stone-500 hover:border-amber-500 hover:text-amber-600 transition-colors"
           >
             <ImagePlus className="w-8 h-8" />
-            <span className="text-sm">Klik untuk upload foto</span>
-            <span className="text-xs">JPG, PNG, WebP · Maks 5 MB</span>
+            <span className="text-sm">{f('photoUpload')}</span>
+            <span className="text-xs">{f('photoHint')}</span>
           </button>
         )}
         <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFileChange} className="hidden" />
@@ -239,49 +234,49 @@ export function EditForm({ band }: Props) {
 
       {/* Name */}
       <div>
-        <label className={labelClass}>Nama Band / Project <span className="text-red-500">*</span></label>
-        <Input type="text" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="Contoh: Burgerkill, Padi Reborn" />
+        <label className={labelClass}>{f('nameLabel')} <span className="text-red-500">*</span></label>
+        <Input type="text" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder={f('namePlaceholder')} />
       </div>
 
       {/* Bio */}
       <div>
         <div className="flex items-center justify-between mb-1">
-          <label className="block text-sm font-medium text-stone-700 dark:text-stone-300">Bio / Deskripsi</label>
-          <button
+          <label className="block text-sm font-medium text-stone-700 dark:text-stone-300">{f('bioLabel')}</label>
+          <Button
             type="button"
+            variant="ghost-amber"
+            size="sm"
             onClick={handleGenerateBio}
             disabled={isGenerating || !form.name.trim()}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="text-xs"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            {isGenerating ? 'Generating...' : 'Generate dengan AI'}
-          </button>
+            {isGenerating ? f('generating') : f('generateBio')}
+          </Button>
         </div>
-        <TextArea value={form.bio} onChange={(e) => set('bio', e.target.value)} readOnly={isGenerating} rows={3} placeholder="Ceritakan sedikit tentang band kamu..." />
+        <TextArea value={form.bio} onChange={(e) => set('bio', e.target.value)} readOnly={isGenerating} rows={3} placeholder={f('bioPlaceholder')} />
       </div>
 
       {/* Formed year */}
       <div>
-        <label className={labelClass}>Tahun Berdiri</label>
+        <label className={labelClass}>{f('formedYear')}</label>
         <Input type="text" inputMode="numeric" pattern="[0-9]*" value={form.formed_year} onChange={(e) => { if (/^\d{0,4}$/.test(e.target.value)) set('formed_year', e.target.value) }} placeholder="2010" maxLength={4} />
       </div>
 
       {/* Province + City */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Select label="Provinsi" placeholder="Pilih provinsi" value={form.province_id} options={provinces.map((p) => ({ value: String(p.id), label: p.name }))} onChange={(val) => set('province_id', val)} searchable />
-        <Select label="Kota / Kabupaten" placeholder="Pilih kota" value={form.city_id} options={cities.map((c) => ({ value: String(c.id), label: c.name }))} onChange={(val) => set('city_id', val)} disabled={cities.length === 0} searchable />
+        <Select label={f('province')} placeholder={f('provincePlaceholder')} value={form.province_id} options={provinces.map((p) => ({ value: String(p.id), label: p.name }))} onChange={(val) => set('province_id', val)} searchable searchPlaceholder={f('selectSearch')} notFoundText={f('selectNotFound')} />
+        <Select label={f('city')} placeholder={f('cityPlaceholder')} value={form.city_id} options={cities.map((c) => ({ value: String(c.id), label: c.name }))} onChange={(val) => set('city_id', val)} disabled={cities.length === 0} searchable searchPlaceholder={f('selectSearch')} notFoundText={f('selectNotFound')} />
       </div>
 
       {/* Genres */}
       <div>
-        <label className={`${labelClass} mb-2`}>Genre</label>
+        <label className={`${labelClass} mb-2`}>{f('genreEdit')}</label>
         <div className="flex flex-wrap gap-2">
           {genres.map((g) => (
             <button key={g.id} type="button" onClick={() => toggleGenre(g.id)}
               className={`px-3 py-1 rounded-full text-sm border transition-colors ${
-                form.genre_ids.includes(g.id)
-                  ? 'bg-amber-700 text-white border-amber-700'
-                  : 'border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 hover:border-amber-500'
+                form.genre_ids.includes(g.id) ? 'bg-amber-700 text-white border-amber-700' : 'border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 hover:border-amber-500'
               }`}
             >
               {g.name}
@@ -292,7 +287,7 @@ export function EditForm({ band }: Props) {
 
       {/* WhatsApp */}
       <div>
-        <label className={labelClass}>Nomor WhatsApp</label>
+        <label className={labelClass}>{f('whatsapp')}</label>
         <div className="flex">
           <span className="inline-flex items-center px-3 border border-r-0 border-stone-300 dark:border-stone-600 rounded-l-lg bg-stone-50 dark:bg-stone-700 text-stone-500 dark:text-stone-400 text-sm">+62</span>
           <input type="text" value={form.contact_wa.replace(/^62/, '')} onChange={(e) => { const val = e.target.value.replace(/^0/, ''); set('contact_wa', val ? '62' + val : '') }} className="flex-1 border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder-stone-400 rounded-r-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="8123456789" />
@@ -301,44 +296,23 @@ export function EditForm({ band }: Props) {
 
       {/* Email */}
       <div>
-        <label className={labelClass}>Email Kontak</label>
+        <label className={labelClass}>{f('email')}</label>
         <Input type="email" value={form.contact_email} onChange={(e) => set('contact_email', e.target.value)} placeholder="band@email.com" />
       </div>
 
       {/* Social */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div>
-          <label className={labelClass}>Instagram</label>
-          <Input type="text" value={form.instagram} onChange={(e) => set('instagram', e.target.value)} placeholder="@bandkamu" />
-        </div>
-        <div>
-          <label className={labelClass}>YouTube URL</label>
-          <Input type="text" value={form.youtube} onChange={(e) => set('youtube', e.target.value)} placeholder="youtube.com/c/..." />
-        </div>
-        <div>
-          <label className={labelClass}>Spotify URL</label>
-          <Input type="text" value={form.spotify} onChange={(e) => set('spotify', e.target.value)} placeholder="open.spotify.com/artist/..." />
-        </div>
-        <div>
-          <label className={labelClass}>YouTube Music URL</label>
-          <Input type="text" value={form.youtube_music} onChange={(e) => set('youtube_music', e.target.value)} placeholder="music.youtube.com/channel/..." />
-        </div>
-        <div>
-          <label className={labelClass}>Apple Music URL</label>
-          <Input type="text" value={form.apple_music} onChange={(e) => set('apple_music', e.target.value)} placeholder="music.apple.com/id/artist/..." />
-        </div>
-        <div>
-          <label className={labelClass}>Bandcamp URL</label>
-          <Input type="text" value={form.bandcamp} onChange={(e) => set('bandcamp', e.target.value)} placeholder="bandname.bandcamp.com" />
-        </div>
+        {socialFields.map(({ label, field, placeholder }) => (
+          <div key={field}>
+            <label className={labelClass}>{label}</label>
+            <Input type="text" value={(form as unknown as Record<string, string>)[field]} onChange={(e) => set(field, e.target.value)} placeholder={placeholder} />
+          </div>
+        ))}
       </div>
 
       {/* Looking for members */}
-      <Checkbox
-        checked={form.is_looking_for_members}
-        onChange={(e) => set('is_looking_for_members', e.target.checked)}
-      >
-        <span className="text-sm text-stone-700 dark:text-stone-300">Band kami sedang membuka lowongan untuk member baru</span>
+      <Checkbox checked={form.is_looking_for_members} onChange={(e) => set('is_looking_for_members', e.target.checked)}>
+        <span className="text-sm text-stone-700 dark:text-stone-300">{f('openMember')}</span>
       </Checkbox>
 
       {error && (
@@ -346,25 +320,19 @@ export function EditForm({ band }: Props) {
       )}
 
       <div className="flex gap-3">
-        <button type="button" onClick={() => router.back()} className="flex-1 border border-stone-300 dark:border-stone-600 text-stone-700 dark:text-stone-300 py-2.5 rounded-lg text-sm font-medium hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
-          Batal
-        </button>
-        <button type="submit" disabled={submitting} className="flex-1 bg-amber-700 text-white py-2.5 rounded-lg font-semibold text-sm hover:bg-amber-800 transition-colors disabled:opacity-60">
+        <Button type="button" variant="secondary" size="lg" className="flex-1" onClick={() => router.back()}>
+          {t('cancel')}
+        </Button>
+        <Button type="submit" size="lg" loading={submitting} className="flex-1">
           {submitLabel}
-        </button>
+        </Button>
       </div>
 
       <div className="pt-4 border-t border-stone-200 dark:border-stone-700 flex justify-end">
         <DeleteBandButton bandId={band.id} bandName={band.name} />
       </div>
 
-      {cropSrc && (
-        <ImageCropper
-          src={cropSrc}
-          onConfirm={handleCropConfirm}
-          onCancel={handleCropCancel}
-        />
-      )}
+      {cropSrc && <ImageCropper src={cropSrc} onConfirm={handleCropConfirm} onCancel={handleCropCancel} />}
     </form>
   )
 }

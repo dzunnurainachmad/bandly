@@ -1,14 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Select } from '@/components/ui/Select'
-
-const SORT_OPTIONS = [
-  { value: 'updated_desc', label: 'Terbaru' },
-  { value: 'updated_asc',  label: 'Terlama' },
-  { value: 'name_asc',     label: 'Nama A–Z' },
-  { value: 'name_desc',    label: 'Nama Z–A' },
-]
 
 interface SortBarProps {
   currentSort?: string
@@ -18,7 +12,15 @@ interface SortBarProps {
 
 export function SortBar({ currentSort, total, searchParams }: SortBarProps) {
   const router = useRouter()
+  const t = useTranslations('sortBar')
   const active = currentSort || 'updated_desc'
+
+  const SORT_OPTIONS = [
+    { value: 'updated_desc', label: t('newest') },
+    { value: 'updated_asc',  label: t('oldest') },
+    { value: 'name_asc',     label: t('nameAZ') },
+    { value: 'name_desc',    label: t('nameZA') },
+  ]
 
   function buildUrl(sort: string) {
     const p = new URLSearchParams()
@@ -35,10 +37,12 @@ export function SortBar({ currentSort, total, searchParams }: SortBarProps) {
   return (
     <div className="flex items-center justify-between mb-4">
       <p className="text-sm text-stone-500 dark:text-stone-400">
-        {total !== null ? <><span className="font-medium text-stone-700 dark:text-stone-200">{total}</span> band ditemukan</> : null}
+        {total !== null ? (
+          <><span className="font-medium text-stone-700 dark:text-stone-200">{total}</span> {t('bandsFound')}</>
+        ) : null}
       </p>
       <div className="flex items-center gap-2">
-        <span className="text-xs text-stone-400 hidden sm:inline">Urutkan:</span>
+        <span className="text-xs text-stone-400 hidden sm:inline">{t('sortBy')}</span>
         <div className="w-36">
           <Select
             value={active}

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { X, Send, Bot, Maximize2, Trash2, Sparkles } from 'lucide-react'
 import { usePlayer } from '@/contexts/PlayerContext'
@@ -29,6 +30,7 @@ export function FloatingChat() {
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
   const isLoading = status === 'streaming' || status === 'submitted'
+  const t = useTranslations('floatingChat')
 
   useEffect(() => {
     const stored = loadMessages()
@@ -56,28 +58,27 @@ export function FloatingChat() {
     localStorage.removeItem(STORAGE_KEY)
   }
 
-  // Hide on the full chat page or if not logged in
   if (pathname === '/chat' || loading || !user) return null
 
-  // Lift button above MiniPlayer when it's active
   const bottomOffset = track ? 'bottom-20' : 'bottom-6'
+
+  const suggestions = t.raw('suggestions') as string[]
 
   return (
     <div className={`hidden lg:block fixed ${bottomOffset} right-6 z-50 transition-[bottom] duration-200`}>
-      {/* Chat panel */}
       {open && (
         <div className="absolute bottom-16 right-0 w-80 h-[480px] bg-[#fefaf4] dark:bg-[#231d15] border border-stone-200 dark:border-stone-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-stone-200 dark:border-stone-700 shrink-0">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-600" />
-              <span className="text-sm font-semibold text-stone-900 dark:text-stone-100">Discover AI</span>
+              <span className="text-sm font-semibold text-stone-900 dark:text-stone-100">{t('title')}</span>
             </div>
             <div className="flex items-center gap-0.5">
               {messages.length > 0 && (
                 <button
                   onClick={handleClear}
-                  title="Hapus riwayat"
+                  title={t('clearHistory')}
                   className="p-1.5 text-stone-400 hover:text-red-500 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -85,7 +86,7 @@ export function FloatingChat() {
               )}
               <Link
                 href="/chat"
-                title="Buka penuh"
+                title={t('openFull')}
                 className="p-1.5 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
               >
                 <Maximize2 className="w-3.5 h-3.5" />
@@ -104,9 +105,9 @@ export function FloatingChat() {
             {messages.length === 0 && (
               <div className="text-center py-8 space-y-3">
                 <Bot className="w-8 h-8 text-amber-600 mx-auto opacity-60" />
-                <p className="text-xs text-stone-400">Tanya soal band Indonesia</p>
+                <p className="text-xs text-stone-400">{t('emptyHint')}</p>
                 <div className="flex flex-col gap-1.5 items-center">
-                  {['Band punk dari Jogja', 'Band metal Bandung', 'Band jazz Jakarta'].map((q) => (
+                  {suggestions.map((q) => (
                     <button
                       key={q}
                       onClick={() => setInput(q)}
@@ -170,7 +171,7 @@ export function FloatingChat() {
                         ))}
                         {result.bands.length > 3 && (
                           <Link href="/chat" onClick={() => setOpen(false)} className="text-[10px] text-amber-600 hover:underline pl-1">
-                            +{result.bands.length - 3} lainnya →
+                            +{result.bands.length - 3} {t('moreResults').replace(`+{count} `, '')}
                           </Link>
                         )}
                       </div>
@@ -204,7 +205,7 @@ export function FloatingChat() {
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Tanya tentang band..."
+                placeholder={t('placeholder')}
                 autoFocus
                 className="flex-1 bg-transparent px-2 py-1 text-xs outline-none placeholder:text-stone-400 text-stone-900 dark:text-stone-100"
               />
@@ -223,7 +224,7 @@ export function FloatingChat() {
       {/* Floating button */}
       <button
         onClick={() => setOpen(!open)}
-        title="Discover AI"
+        title={t('title')}
         className="w-12 h-12 bg-amber-700 hover:bg-amber-800 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
       >
         {open ? <X className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Bookmark } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   bandId: string
@@ -15,6 +16,7 @@ export function SaveBandButton({ bandId, initialSaved, isLoggedIn, variant = 'de
   const [saved, setSaved] = useState(initialSaved)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const t = useTranslations('saveBand')
 
   async function handleToggle() {
     if (!isLoggedIn) {
@@ -40,7 +42,7 @@ export function SaveBandButton({ bandId, initialSaved, isLoggedIn, variant = 'de
       <button
         onClick={handleToggle}
         disabled={loading}
-        title={saved ? 'Hapus dari tersimpan' : 'Simpan band ini'}
+        title={saved ? t('removeTitle') : t('saveTitle')}
         className={`flex-none p-2.5 rounded-lg border transition-colors disabled:opacity-60 ${
           saved
             ? 'bg-amber-700 text-white border-amber-700 hover:bg-amber-800'
@@ -56,15 +58,15 @@ export function SaveBandButton({ bandId, initialSaved, isLoggedIn, variant = 'de
     <button
       onClick={handleToggle}
       disabled={loading}
-      title={saved ? 'Hapus dari tersimpan' : 'Simpan band ini'}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm transition-colors disabled:opacity-60 ${
+      title={saved ? t('removeTitle') : t('saveTitle')}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs transition-colors disabled:opacity-60 ${
         saved
           ? 'bg-amber-700 text-white border-amber-700 hover:bg-amber-800 hover:border-amber-800'
           : 'border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500'
       }`}
     >
-      <Bookmark className={`w-4 h-4 ${saved ? 'fill-current' : ''}`} />
-      {saved ? 'Tersimpan' : 'Simpan'}
+      <Bookmark className={`w-3.5 h-3.5 ${saved ? 'fill-current' : ''}`} />
+      {saved ? t('saved') : t('save')}
     </button>
   )
 }

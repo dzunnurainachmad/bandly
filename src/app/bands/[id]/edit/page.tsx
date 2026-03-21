@@ -1,4 +1,5 @@
 import { notFound, redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { EditForm } from './EditForm'
 
@@ -22,9 +23,11 @@ export default async function EditBandPage({ params }: Props) {
   if (!band) notFound()
   if (band.user_id !== user.id) redirect(`/bands/${id}`)
 
+  const t = await getTranslations('editBand')
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-6">Edit Band</h1>
+      <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-6">{t('title')}</h1>
       <EditForm band={band} />
     </div>
   )

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { LogOut, LayoutDashboard, LogIn, ShieldCheck, MessageSquare, Bookmark, Compass, Plus } from 'lucide-react'
 import { LogoBT } from './LogoBT'
 import { ThemeToggle } from './ThemeToggle'
@@ -23,6 +24,7 @@ export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const [isAdmin, setIsAdmin] = useState(false)
+  const t = useTranslations('nav')
 
   useEffect(() => {
     if (!user) { setIsAdmin(false); return }
@@ -73,42 +75,42 @@ export function Navbar() {
 
         {/* Nav items — centered vertically */}
         <nav className="flex-1 flex flex-col justify-center px-2 gap-2 overflow-hidden">
-          <Link href="/browse" className={navLinkClass('/browse')} title="Jelajahi">
+          <Link href="/browse" className={navLinkClass('/browse')} title={t('browse')}>
             <Compass className="w-5 h-5 shrink-0" />
-            <NavLabel>Jelajahi</NavLabel>
+            <NavLabel>{t('browse')}</NavLabel>
           </Link>
-          <Link href="/chat" className={navLinkClass('/chat')} title="Discover AI">
+          <Link href="/chat" className={navLinkClass('/chat')} title={t('discover')}>
             <MessageSquare className="w-5 h-5 shrink-0" />
-            <NavLabel>Discover AI</NavLabel>
+            <NavLabel>{t('discover')}</NavLabel>
           </Link>
 
           {!loading && user && (
             <>
               {isAdmin && (
-                <Link href="/admin" className={navLinkClass('/admin')} title="Admin">
+                <Link href="/admin" className={navLinkClass('/admin')} title={t('admin')}>
                   <ShieldCheck className="w-5 h-5 shrink-0" />
-                  <NavLabel>Admin</NavLabel>
+                  <NavLabel>{t('admin')}</NavLabel>
                 </Link>
               )}
-              <Link href="/dashboard" className={navLinkClass('/dashboard')} title="Dashboard">
+              <Link href="/dashboard" className={navLinkClass('/dashboard')} title={t('dashboard')}>
                 <LayoutDashboard className="w-5 h-5 shrink-0" />
-                <NavLabel>Dashboard</NavLabel>
+                <NavLabel>{t('dashboard')}</NavLabel>
               </Link>
-              <Link href="/saved" className={navLinkClass('/saved')} title="Tersimpan">
+              <Link href="/saved" className={navLinkClass('/saved')} title={t('saved')}>
                 <Bookmark className="w-5 h-5 shrink-0" />
-                <NavLabel>Tersimpan</NavLabel>
+                <NavLabel>{t('saved')}</NavLabel>
               </Link>
             </>
           )}
 
           <Link
             href="/submit"
-            title="Daftarkan Band"
+            title={t('submit')}
             className="flex items-center px-3 py-2.5 rounded-xl bg-amber-700 text-white hover:bg-amber-800 transition-colors font-medium mt-1"
           >
             <Plus className="w-5 h-5 shrink-0" />
             <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover/sidebar:max-w-[200px] group-hover/sidebar:opacity-100 group-hover/sidebar:ml-3 transition-all duration-200 text-sm font-medium leading-none">
-              Daftarkan Band
+              {t('submit')}
             </span>
           </Link>
         </nav>
@@ -129,19 +131,19 @@ export function Navbar() {
               </Link>
               <button
                 onClick={handleSignOut}
-                title="Keluar"
+                title={t('signOut')}
                 className="flex items-center w-full px-3 py-2.5 rounded-xl text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-red-500 dark:hover:text-red-400 transition-colors"
               >
                 <LogOut className="w-5 h-5 shrink-0" />
-                <NavLabel>Keluar</NavLabel>
+                <NavLabel>{t('signOut')}</NavLabel>
               </button>
             </>
           )}
 
           {!loading && !user && (
-            <Link href="/login" className={navLinkClass('/login')} title="Masuk">
+            <Link href="/login" className={navLinkClass('/login')} title={t('signIn')}>
               <LogIn className="w-5 h-5 shrink-0" />
-              <NavLabel>Masuk</NavLabel>
+              <NavLabel>{t('signIn')}</NavLabel>
             </Link>
           )}
         </div>
@@ -152,7 +154,7 @@ export function Navbar() {
         <div className="flex items-center h-16">
           <Link href="/browse" className={bottomTabClass('/browse')}>
             <Compass className="w-5 h-5" />
-            <span className="text-[10px] font-medium">Jelajahi</span>
+            <span className="text-[10px] font-medium">{t('browse')}</span>
           </Link>
 
           <Link href="/chat" className={bottomTabClass('/chat')}>
@@ -164,7 +166,7 @@ export function Navbar() {
             <div className="w-8 h-8 rounded-xl bg-amber-700 flex items-center justify-center">
               <Plus className="w-4 h-4 text-white" />
             </div>
-            <span className="text-[10px] font-medium text-amber-700">Daftar</span>
+            <span className="text-[10px] font-medium text-amber-700">{t('submitShort')}</span>
           </Link>
 
           {loading ? (
@@ -176,17 +178,17 @@ export function Navbar() {
             <>
               <Link href="/saved" className={bottomTabClass('/saved')}>
                 <Bookmark className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Tersimpan</span>
+                <span className="text-[10px] font-medium">{t('saved')}</span>
               </Link>
               <Link href="/dashboard" className={bottomTabClass('/dashboard')}>
                 <LayoutDashboard className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Dashboard</span>
+                <span className="text-[10px] font-medium">{t('dashboard')}</span>
               </Link>
             </>
           ) : (
             <Link href="/login" className={bottomTabClass('/login')}>
               <LogIn className="w-5 h-5" />
-              <span className="text-[10px] font-medium">Masuk</span>
+              <span className="text-[10px] font-medium">{t('signIn')}</span>
             </Link>
           )}
         </div>

@@ -1,11 +1,24 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { LOCALES, DEFAULT_LOCALE, type Locale } from './i18n/config'
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request })
   const { pathname } = request.nextUrl
 
+  // ── Locale detection ──────────────────────────────────────────
+  if (!request.cookies.get('NEXT_LOCALE')?.value) {
+    const acceptLang = request.headers.get('accept-language') ?? ''
+    const preferred = acceptLang
+      .split(',')
+      .map((s) => s.split(';')[0].trim().slice(0, 2).toLowerCase())
+      .find((lang) => LOCALES.includes(lang as Locale))
+    const locale: Locale = (preferred as Locale) ?? DEFAULT_LOCALE
+    response.cookies.set('NEXT_LOCALE', locale, { path: '/', maxAge: 60 * 60 * 24 * 365 })
+  }
+
+  // ── Supabase auth ─────────────────────────────────────────────
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -59,5 +72,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/submit', '/dashboard/:path*', '/admin/:path*', '/chat', '/bands/:id/edit'],
+  matcher: ['/((?!_next|api|favicon.ico|.*\\..*).*)'],
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { getProvinces, getGenres, getCitiesByProvince } from '@/lib/queries'
 import type { Province, City, Genre } from '@/types'
 import { Select } from '@/components/ui/Select'
@@ -16,13 +17,12 @@ export function FilterBar() {
   const params = useSearchParams()
   const searchRef = useRef<HTMLInputElement>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const t = useTranslations('filterBar')
 
-  // Static data
   const [provinces, setProvinces] = useState<Province[]>([])
   const [genres, setGenres] = useState<Genre[]>([])
   const [cities, setCities] = useState<City[]>([])
 
-  // Derive filter values directly from URL params (no local state needed)
   const province = params.get('province') ?? ''
   const city = params.get('city') ?? ''
   const genreIds = useMemo(() => {
@@ -31,21 +31,17 @@ export function FilterBar() {
   }, [params])
   const lookingForMembers = params.get('open') === 'true'
 
-  // Search needs local state (typed before Enter submits)
   const [search, setSearch] = useState(params.get('q') ?? '')
 
-  // On mount: fetch static data
   useEffect(() => {
     getProvinces().then(setProvinces)
     getGenres().then(setGenres)
   }, [])
 
-  // Sync search input when URL changes (e.g. chip removed)
   useEffect(() => {
     setSearch(params.get('q') ?? '') // eslint-disable-line react-hooks/set-state-in-effect
   }, [params])
 
-  // Fetch cities when province changes
   useEffect(() => {
     if (province) {
       getCitiesByProvince(Number(province)).then(setCities)
@@ -105,7 +101,6 @@ export function FilterBar() {
 
   return (
     <div className="bg-[#fefaf4] dark:bg-[#231d15] border border-stone-200 dark:border-stone-700 rounded-2xl p-4">
-      {/* Header — clickable on mobile to toggle */}
       <button
         type="button"
         onClick={() => setMobileOpen(!mobileOpen)}
@@ -117,7 +112,7 @@ export function FilterBar() {
           ) : (
             <SlidersHorizontal className="w-4 h-4" />
           )}
-          Filter
+          {t('title')}
           {activeCount > 0 && (
             <span className="bg-amber-700 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
               {activeCount}
@@ -130,22 +125,20 @@ export function FilterBar() {
               onClick={(e) => { e.stopPropagation(); reset() }}
               className="flex items-center gap-1 text-xs text-stone-400 hover:text-red-500 transition-colors cursor-pointer"
             >
-              <X className="w-3 h-3" /> Reset
+              <X className="w-3 h-3" /> {t('reset')}
             </span>
           )}
           <ChevronDown className={`w-4 h-4 text-stone-400 md:hidden transition-transform duration-200 ${mobileOpen ? 'rotate-180' : ''}`} />
         </div>
       </button>
 
-      {/* Filter fields — always visible on md+, collapsible on mobile */}
       <div className={`space-y-4 transition-all duration-200 md:mt-4 ${
         mobileOpen ? 'mt-4' : 'hidden md:block'
       }`}>
-        {/* Search */}
         <Input
           ref={searchRef}
           type="text"
-          placeholder="Cari nama band..."
+          placeholder={t('searchPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
@@ -160,43 +153,43 @@ export function FilterBar() {
           ) : undefined}
         />
 
-        {/* Province */}
         <Select
-          label="Provinsi"
-          placeholder="Semua Provinsi"
+          label={t('province')}
+          placeholder={t('allProvinces')}
           value={province}
           options={provinces.map((p) => ({ value: String(p.id), label: p.name }))}
           onChange={handleProvinceChange}
           searchable
+          searchPlaceholder={t('selectSearch')}
+          notFoundText={t('selectNotFound')}
         />
 
-        {/* City */}
         <Select
-          label="Kota / Kabupaten"
-          placeholder="Semua Kota"
+          label={t('city')}
+          placeholder={t('allCities')}
           value={city}
           options={cities.map((c) => ({ value: String(c.id), label: c.name }))}
           onChange={handleCityChange}
           disabled={cities.length === 0}
           searchable
+          searchPlaceholder={t('selectSearch')}
+          notFoundText={t('selectNotFound')}
         />
 
-        {/* Genre (multi-select) */}
         <MultiSelect
-          label="Genre"
-          placeholder="Semua Genre"
+          label={t('genre')}
+          placeholder={t('allGenres')}
           value={genreIds}
           options={genres.map((g) => ({ value: String(g.id), label: g.name }))}
           onChange={handleGenreChange}
         />
 
-        {/* Looking for members */}
         <Checkbox
           checked={lookingForMembers}
           onChange={(e) => handleOpenChange(e.target.checked)}
           className="py-1"
         >
-          <span className="text-sm text-stone-700 dark:text-stone-300 select-none">Buka lowongan member</span>
+          <span className="text-sm text-stone-700 dark:text-stone-300 select-none">{t('openMember')}</span>
         </Checkbox>
       </div>
     </div>

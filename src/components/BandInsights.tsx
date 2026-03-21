@@ -3,15 +3,18 @@
 import { useState, useEffect } from 'react'
 import { experimental_useObject as useObject } from '@ai-sdk/react'
 import { Sparkles, Loader2, ThumbsUp, ThumbsDown } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { BandInsightsSchema } from '@/lib/schemas'
 import type { BandInsights as BandInsightsType } from '@/lib/schemas'
 import type { Band } from '@/types'
+import { Button } from '@/components/ui/Button'
 
 interface Props {
   band: Pick<Band, 'id' | 'name' | 'bio' | 'formed_year' | 'province_name' | 'city_name' | 'genres'>
 }
 
 export function BandInsights({ band }: Props) {
+  const t = useTranslations('bandInsights')
   const [cached, setCached] = useState<BandInsightsType | null>(null)
   const [loadingCache, setLoadingCache] = useState(true)
   const [feedbackSent, setFeedbackSent] = useState<'good' | 'bad' | null>(null)
@@ -64,29 +67,23 @@ export function BandInsights({ band }: Props) {
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-amber-500" />
-          AI Insights
+          {t('title')}
         </h2>
         {!insights && !loadingCache && (
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={analyze}
-            disabled={isLoading}
-            className="inline-flex items-center gap-1.5 text-sm border border-amber-400 text-amber-700 dark:text-amber-400 px-3 py-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors disabled:opacity-50"
+            loading={isLoading}
+            className="border-amber-400 text-amber-700 dark:text-amber-400 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-900/20"
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Menganalisis...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-3.5 h-3.5" /> Analisis
-              </>
-            )}
-          </button>
+            {isLoading ? t('analyzing') : <><Sparkles className="w-3.5 h-3.5" /> {t('analyze')}</>}
+          </Button>
         )}
       </div>
 
       {error && (
-        <p className="text-sm text-red-500">Gagal menganalisis band</p>
+        <p className="text-sm text-red-500">{t('error')}</p>
       )}
 
       {(insights || isLoading) && (
@@ -111,7 +108,7 @@ export function BandInsights({ band }: Props) {
             ))}
             {isLoading && !insights?.style_tags?.length && (
               <span className="px-2.5 py-1 bg-stone-100 dark:bg-stone-800 rounded-full text-xs text-stone-400 animate-pulse">
-                Menganalisis...
+                {t('analyzing')}
               </span>
             )}
           </div>
@@ -119,7 +116,7 @@ export function BandInsights({ band }: Props) {
           {/* Target audience */}
           {insights?.target_audience && (
             <div>
-              <p className="text-xs font-medium text-stone-500 dark:text-stone-500 uppercase tracking-wide mb-1">Target Pendengar</p>
+              <p className="text-xs font-medium text-stone-500 dark:text-stone-500 uppercase tracking-wide mb-1">{t('targetAudience')}</p>
               <p className="text-stone-600 dark:text-stone-400">{insights.target_audience}</p>
             </div>
           )}
@@ -127,7 +124,7 @@ export function BandInsights({ band }: Props) {
           {/* Strengths */}
           {insights?.strengths && insights.strengths.length > 0 && (
             <div>
-              <p className="text-xs font-medium text-stone-500 dark:text-stone-500 uppercase tracking-wide mb-1">Kelebihan</p>
+              <p className="text-xs font-medium text-stone-500 dark:text-stone-500 uppercase tracking-wide mb-1">{t('strengths')}</p>
               <ul className="space-y-1">
                 {insights.strengths.filter((s): s is string => !!s).map((s) => (
                   <li key={s} className="flex items-start gap-2 text-stone-600 dark:text-stone-400">
@@ -142,24 +139,21 @@ export function BandInsights({ band }: Props) {
           {/* Booking pitch */}
           {insights?.booking_pitch && (
             <div className="border border-amber-200 dark:border-amber-800 rounded-lg p-3 bg-amber-50 dark:bg-amber-900/20">
-              <p className="text-xs font-medium text-amber-700 dark:text-amber-500 uppercase tracking-wide mb-1">Booking Pitch</p>
+              <p className="text-xs font-medium text-amber-700 dark:text-amber-500 uppercase tracking-wide mb-1">{t('bookingPitch')}</p>
               <p className="text-stone-700 dark:text-stone-300 italic">&ldquo;{insights.booking_pitch}&rdquo;</p>
             </div>
           )}
 
           {!isLoading && (
             <div className="flex items-center justify-between">
-              <button
-                onClick={clear}
-                className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300"
-              >
-                Reset
-              </button>
+              <Button variant="ghost" size="sm" onClick={clear} className="text-xs">
+                {t('reset')}
+              </Button>
               {feedbackSent ? (
-                <span className="text-xs text-stone-400">Terima kasih!</span>
+                <span className="text-xs text-stone-400">{t('thanks')}</span>
               ) : (
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-stone-400">Hasilnya akurat?</span>
+                  <span className="text-xs text-stone-400">{t('accurate')}</span>
                   <button onClick={() => sendFeedback('good')} className="text-stone-400 hover:text-green-500 transition-colors">
                     <ThumbsUp className="w-3.5 h-3.5" />
                   </button>

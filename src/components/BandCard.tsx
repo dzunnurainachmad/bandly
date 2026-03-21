@@ -1,5 +1,8 @@
+'use client'
+
 import Link from 'next/link'
 import { MapPin, Music, UserPlus, ChevronRight } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Badge } from './ui/Badge'
 import { PlayButton } from './PlayButton'
 import { SaveBandButton } from './SaveBandButton'
@@ -13,13 +16,14 @@ interface BandCardProps {
 }
 
 export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
+  const t = useTranslations('bandCard')
   const waLink = band.contact_wa ? `https://wa.me/${band.contact_wa}` : null
   const emailLink = band.contact_email ? `mailto:${band.contact_email}` : null
   const contactLink = waLink ?? emailLink
   const contactLabel = waLink ? 'WhatsApp' : 'Email'
   const contactStyle = waLink
-    ? 'flex-1 text-center text-sm border border-emerald-500 text-emerald-600 px-2 py-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors min-h-11 flex items-center justify-center'
-    : 'flex-1 text-center text-sm border border-sky-500 text-sky-600 px-2 py-2 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors min-h-11 flex items-center justify-center'
+    ? 'flex-1 text-center text-xs border border-emerald-500 text-emerald-600 px-2 py-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors flex items-center justify-center'
+    : 'flex-1 text-center text-xs border border-sky-500 text-sky-600 px-2 py-1.5 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors flex items-center justify-center'
   const youtubeEmbed = (band.youtube ? getYouTubeEmbedUrl(band.youtube) : null)
     ?? (band.youtube_music ? getYouTubeEmbedUrl(band.youtube_music) : null)
   const spotifyEmbed = band.spotify ? getSpotifyEmbedUrl(band.spotify) : null
@@ -31,7 +35,6 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
 
       {/* ── Mobile: horizontal list row ── */}
       <div className="flex sm:hidden items-center gap-4 p-4">
-        {/* Thumbnail */}
         <div className="shrink-0 relative">
           <Link href={`/bands/${band.id}`}>
             <div className="w-14 h-14 rounded-xl bg-linear-to-br from-amber-100 to-orange-100 overflow-hidden">
@@ -62,13 +65,12 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
           )}
         </div>
 
-        {/* Info */}
         <Link href={`/bands/${band.id}`} className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100 truncate">{band.name}</h3>
             {band.is_looking_for_members && (
               <span className="shrink-0 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded-full leading-none">
-                Open
+                {t('openBadge')}
               </span>
             )}
           </div>
@@ -92,7 +94,6 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
           )}
         </Link>
 
-        {/* Actions */}
         <div className="flex items-center gap-2 shrink-0">
           {isLoggedIn !== undefined && (
             <SaveBandButton bandId={band.id} initialSaved={isSaved} isLoggedIn={isLoggedIn} variant="icon" />
@@ -103,7 +104,6 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
 
       {/* ── Desktop: card layout ── */}
       <div className="hidden sm:flex flex-col flex-1">
-        {/* Thumbnail */}
         <div className="aspect-video bg-linear-to-br from-amber-100 to-orange-100 relative">
           {band.photo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -118,7 +118,7 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
             <div className="absolute top-2 right-2">
               <Badge variant="green">
                 <UserPlus className="w-3 h-3 mr-1" />
-                Open Member
+                {t('openMemberBadge')}
               </Badge>
             </div>
           )}
@@ -175,7 +175,7 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
                 href={`https://instagram.com/${band.instagram.replace('@', '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 text-center text-sm border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 px-2 py-2 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors min-h-11 flex items-center justify-center"
+                className="flex-1 text-center text-xs border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 px-2 py-1.5 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors flex items-center justify-center"
               >
                 Instagram
               </a>

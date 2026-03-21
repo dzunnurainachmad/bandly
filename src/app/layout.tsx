@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
+import { getLocale, getMessages } from 'next-intl/server'
+import { NextIntlClientProvider } from 'next-intl'
 import './globals.css'
 import { Navbar } from '@/components/Navbar'
 import { MiniPlayer } from '@/components/MiniPlayer'
@@ -17,23 +19,28 @@ export const metadata: Metadata = {
     'Platform untuk menemukan band dan project musik di seluruh Indonesia. Filter berdasarkan provinsi, kota, dan genre.',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale()
+  const messages = await getMessages()
+
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
       <body className={`${geist.className} bg-[#faf6f0] dark:bg-[#1a1510] text-stone-900 dark:text-stone-100 antialiased`}>
-        <ThemeProvider>
-          <AuthProvider>
-            <PlayerProvider>
-              <Navbar />
-              <MainContent>{children}</MainContent>
-              <MiniPlayer />
-              <FloatingChat />
-            </PlayerProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          <ThemeProvider>
+            <AuthProvider>
+              <PlayerProvider>
+                <Navbar />
+                <MainContent>{children}</MainContent>
+                <MiniPlayer />
+                <FloatingChat />
+              </PlayerProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   )

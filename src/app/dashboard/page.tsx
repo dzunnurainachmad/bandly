@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Music, Settings, Bookmark } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getUserBands } from '@/lib/queries'
@@ -12,9 +13,10 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login?next=/dashboard')
 
-  const [{ bands, hasMore }, profileRes] = await Promise.all([
+  const [{ bands, hasMore }, profileRes, t] = await Promise.all([
     getUserBands(user.id),
     supabaseAdmin.from('profiles').select('display_name, bio, avatar_url, username').eq('id', user.id).single(),
+    getTranslations('dashboard'),
   ])
 
   const profile = profileRes.data
@@ -43,24 +45,24 @@ export default async function DashboardPage() {
         <div className="shrink-0 flex items-center gap-2">
           {(profile?.username || user.id) && (
             <Link href={`/u/${profile?.username ?? user.id}`} className="flex items-center gap-1.5 text-xs text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 border border-stone-200 dark:border-stone-700 px-3 py-1.5 rounded-lg transition-colors">
-              Profil Publik
+              {t('publicProfile')}
             </Link>
           )}
           <Link href="/settings" className="flex items-center gap-1.5 text-xs text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 border border-stone-200 dark:border-stone-700 px-3 py-1.5 rounded-lg transition-colors">
-            <Settings className="w-3.5 h-3.5" /> Edit
+            <Settings className="w-3.5 h-3.5" /> {t('edit')}
           </Link>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">Band Saya</h1>
+          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">{t('myBands')}</h1>
           <Link
             href="/saved"
             className="inline-flex items-center gap-1.5 text-sm border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 px-3 py-2 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors min-h-11"
           >
             <Bookmark className="w-3.5 h-3.5" />
-            Tersimpan
+            {t('saved')}
           </Link>
         </div>
         <Link
@@ -68,7 +70,7 @@ export default async function DashboardPage() {
           className="inline-flex items-center justify-center gap-2 bg-amber-700 hover:bg-amber-800 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors min-h-11"
         >
           <Plus className="w-4 h-4" />
-          Daftarkan Band
+          {t('registerBand')}
         </Link>
       </div>
 
@@ -77,10 +79,10 @@ export default async function DashboardPage() {
           <div className="w-16 h-16 bg-stone-100 dark:bg-stone-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Music className="w-8 h-8 text-stone-300 dark:text-stone-600" />
           </div>
-          <p className="font-medium text-stone-600 dark:text-stone-400">Belum ada band terdaftar</p>
+          <p className="font-medium text-stone-600 dark:text-stone-400">{t('noBands')}</p>
           <p className="text-sm mt-1 text-stone-400 dark:text-stone-500">
             <Link href="/submit" className="text-amber-600 hover:underline">
-              Daftarkan band pertamamu
+              {t('registerFirst')}
             </Link>
           </p>
         </div>

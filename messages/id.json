@@ -1,0 +1,342 @@
+{
+  "nav": {
+    "browse": "Jelajahi",
+    "discover": "Discover AI",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "saved": "Tersimpan",
+    "submit": "Daftarkan Band",
+    "submitShort": "Daftar",
+    "signOut": "Keluar",
+    "signIn": "Masuk"
+  },
+  "home": {
+    "hero": {
+      "title": "Temukan Band\ndi Seluruh Indonesia",
+      "subtitle": "Jelajahi ratusan band dan project musik dari Sabang sampai Merauke. Filter berdasarkan provinsi, kota, dan genre favoritmu.",
+      "ctaBrowse": "Jelajahi Band",
+      "ctaSubmit": "Daftarkan Band Kamu"
+    },
+    "features": {
+      "title": "Fitur Unggulan",
+      "subtitle": "Semua yang kamu butuhkan untuk menemukan dan terhubung dengan band di Indonesia.",
+      "location": { "title": "Filter Lokasi", "desc": "Cari band berdasarkan 34 provinsi dan ratusan kota di Indonesia." },
+      "genre": { "title": "Filter Genre", "desc": "Dari Rock, Metal, Jazz, Dangdut hingga Electronic — semua ada di sini." },
+      "member": { "title": "Cari Member", "desc": "Band yang buka lowongan member mudah ditemukan dengan filter khusus." },
+      "discoverAI": { "title": "Discover AI", "desc": "Tanya AI untuk rekomendasi band sesuai selera — cukup ceritakan musik yang kamu suka." },
+      "bioGenerator": { "title": "AI Bio Generator", "desc": "Buat bio band secara otomatis dengan AI. Cukup isi detail, bio langsung jadi." },
+      "player": { "title": "Dengarkan Langsung", "desc": "Putar musik dari Spotify, YouTube, dan Apple Music langsung di halaman band." }
+    },
+    "aiCta": {
+      "title": "Bingung Mau Dengerin Apa?",
+      "subtitle": "Ceritakan selera musikmu ke AI kami, dan dapatkan rekomendasi band Indonesia yang cocok buatmu.",
+      "cta": "Coba Discover AI"
+    },
+    "exploreGenres": "Jelajahi Genre",
+    "footer": {
+      "tagline": "Platform direktori band Indonesia. Temukan, daftarkan, dan hubungkan musisi dari seluruh nusantara.",
+      "nav": "Navigasi",
+      "popularGenres": "Genre Populer",
+      "terms": "Syarat & Ketentuan",
+      "madeWith": "Dibuat dengan semangat untuk musik Indonesia."
+    }
+  },
+  "browse": {
+    "title": "Jelajahi Band",
+    "clearAll": "Hapus semua",
+    "openMemberChip": "Buka lowongan member",
+    "notFound": "Tidak ada band yang ditemukan",
+    "notFoundHint": "Coba ubah filter atau",
+    "resetSearch": "reset pencarian"
+  },
+  "sortBar": {
+    "bandsFound": "band ditemukan",
+    "sortBy": "Urutkan:",
+    "newest": "Terbaru",
+    "oldest": "Terlama",
+    "nameAZ": "Nama A–Z",
+    "nameZA": "Nama Z–A"
+  },
+  "filterBar": {
+    "title": "Filter",
+    "reset": "Reset",
+    "searchPlaceholder": "Cari nama band...",
+    "province": "Provinsi",
+    "allProvinces": "Semua Provinsi",
+    "city": "Kota / Kabupaten",
+    "allCities": "Semua Kota",
+    "genre": "Genre",
+    "allGenres": "Semua Genre",
+    "openMember": "Buka lowongan member",
+    "selectSearch": "Cari...",
+    "selectNotFound": "Tidak ditemukan"
+  },
+  "bandCard": {
+    "openBadge": "Open",
+    "openMemberBadge": "Open Member"
+  },
+  "saveBand": {
+    "removeTitle": "Hapus dari tersimpan",
+    "saveTitle": "Simpan band ini",
+    "saved": "Tersimpan",
+    "save": "Simpan"
+  },
+  "playButton": {
+    "play": "Putar Musik",
+    "playing": "Sedang Diputar"
+  },
+  "themeToggle": {
+    "light": "Mode Terang",
+    "dark": "Mode Gelap"
+  },
+  "floatingChat": {
+    "title": "Discover AI",
+    "clearHistory": "Hapus riwayat",
+    "openFull": "Buka penuh",
+    "placeholder": "Tanya tentang band...",
+    "emptyHint": "Tanya soal band Indonesia",
+    "suggestions": ["Band punk dari Jogja", "Band metal Bandung", "Band jazz Jakarta"],
+    "moreResults": "+{count} lainnya →"
+  },
+  "dashboard": {
+    "publicProfile": "Profil Publik",
+    "edit": "Edit",
+    "myBands": "Band Saya",
+    "saved": "Tersimpan",
+    "registerBand": "Daftarkan Band",
+    "noBands": "Belum ada band terdaftar",
+    "registerFirst": "Daftarkan band pertamamu"
+  },
+  "saved": {
+    "title": "Band Tersimpan",
+    "empty": "Belum ada band tersimpan",
+    "emptyHint": "Jelajahi band dan simpan yang kamu suka"
+  },
+  "login": {
+    "title": "Masuk ke BandTelusur",
+    "subtitle": "Daftarkan dan kelola band kamu",
+    "signIn": "Masuk",
+    "register": "Daftar",
+    "forgotPassword": "Reset Password",
+    "forgotHint": "Masukkan email kamu dan kami akan kirimkan link untuk reset password.",
+    "sendResetLink": "Kirim Link Reset",
+    "continueWithGoogle": "Lanjutkan dengan Google",
+    "redirecting": "Mengalihkan...",
+    "or": "atau",
+    "forgotPasswordLink": "Lupa password?",
+    "agreeTerms": "Saya menyetujui",
+    "terms": "Syarat & Ketentuan",
+    "createAccount": "Buat Akun",
+    "processing": "Memproses...",
+    "sending": "Mengirim...",
+    "errors": {
+      "invalidCredentials": "Email atau password salah.",
+      "mustAgreeTerms": "Kamu harus menyetujui Syarat & Ketentuan untuk mendaftar."
+    },
+    "success": {
+      "checkEmail": "Cek email kamu untuk konfirmasi akun.",
+      "resetSent": "Link reset password sudah dikirim ke email kamu."
+    }
+  },
+  "settings": {
+    "title": "Pengaturan Profil",
+    "avatar": "Foto Profil",
+    "avatarHint": "JPEG, PNG, atau WebP · Maks 2 MB",
+    "displayName": "Nama Tampilan",
+    "displayNamePlaceholder": "Nama yang terlihat publik",
+    "bio": "Bio",
+    "bioPlaceholder": "Ceritakan sedikit tentang dirimu...",
+    "save": "Simpan Perubahan",
+    "saved": "Tersimpan",
+    "language": "Bahasa",
+    "languageLabel": "Pilih Bahasa",
+    "username": {
+      "checking": "Mengecek...",
+      "available": "Tersedia",
+      "taken": "Sudah dipakai",
+      "invalid": "3–30 karakter, hanya huruf kecil, angka, dan _"
+    },
+    "errors": {
+      "avatarSize": "Ukuran foto maksimal 2 MB.",
+      "avatarUpload": "Gagal upload foto: {message}",
+      "saveFailed": "Gagal menyimpan"
+    }
+  },
+  "chat": {
+    "title": "Discover Band",
+    "subtitle": "Tanya apa aja soal band Indonesia",
+    "clearHistory": "Hapus riwayat",
+    "tryAsk": "Coba tanya seperti:",
+    "suggestions": [
+      "Band punk dari Jogja",
+      "Cari band yang butuh drummer",
+      "Band metal dari Bandung",
+      "Ada band jazz di Jakarta?"
+    ],
+    "placeholder": "Cari band... misal: band metal dari Bandung",
+    "lookingForMembers": "Mencari anggota baru"
+  },
+  "submit": {
+    "title": "Daftarkan Band / Project Musik",
+    "subtitle": "Isi form berikut untuk mendaftarkan band atau project musik kamu ke direktori BandTelusur.",
+    "fillFromUrl": "Isi otomatis dari URL",
+    "fillFromUrlHint": "Tempel link website atau halaman Facebook/YouTube band — AI akan mengisi formulir secara otomatis.",
+    "analyzing": "Menganalisis...",
+    "fillForm": "Isi Formulir",
+    "fillSuccess": "✓ Formulir diisi dari URL",
+    "uploading": "Mengupload foto...",
+    "submitting": "Mendaftarkan...",
+    "submitBtn": "Daftarkan Band",
+    "analyzingPhoto": "Menganalisis foto...",
+    "photoGenreSuggestion": "Saran genre dari foto:",
+    "errors": {
+      "photoSize": "Ukuran foto maksimal 5 MB.",
+      "nameRequired": "Nama band wajib diisi.",
+      "fetchFailed": "Gagal mengambil data",
+      "fillFromUrlFailed": "Gagal mengisi formulir dari URL. Coba lagi.",
+      "bioNameRequired": "Isi nama band dulu sebelum generate bio.",
+      "bioFailed": "Gagal generate bio. Coba lagi.",
+      "genericError": "Terjadi kesalahan. Coba lagi."
+    }
+  },
+  "editBand": {
+    "title": "Edit Band",
+    "cancel": "Batal",
+    "uploading": "Mengupload foto...",
+    "saving": "Menyimpan...",
+    "saveBtn": "Simpan Perubahan",
+    "errors": {
+      "photoSize": "Ukuran foto maksimal 5 MB.",
+      "nameRequired": "Nama band wajib diisi.",
+      "bioNameRequired": "Isi nama band dulu sebelum generate bio.",
+      "bioFailed": "Gagal generate bio. Coba lagi.",
+      "genericError": "Terjadi kesalahan."
+    }
+  },
+  "deleteBand": {
+    "button": "Hapus Band",
+    "confirm": "Hapus \"{name}\"?",
+    "deleting": "Menghapus...",
+    "yes": "Ya, Hapus",
+    "cancel": "Batal"
+  },
+  "bandForm": {
+    "photo": "Foto Band",
+    "photoUpload": "Klik untuk upload foto",
+    "photoHint": "JPG, PNG, WebP · Maks 5 MB",
+    "nameLabel": "Nama Band / Project",
+    "namePlaceholder": "Contoh: Burgerkill, Padi Reborn",
+    "bioLabel": "Bio / Deskripsi",
+    "generateBio": "Generate dengan AI",
+    "generating": "Generating...",
+    "bioPlaceholder": "Ceritakan sedikit tentang band kamu...",
+    "formedYear": "Tahun Berdiri",
+    "province": "Provinsi",
+    "provincePlaceholder": "Pilih provinsi",
+    "city": "Kota / Kabupaten",
+    "cityPlaceholder": "Pilih kota",
+    "genre": "Genre (pilih semua yang sesuai)",
+    "genreEdit": "Genre",
+    "whatsapp": "Nomor WhatsApp",
+    "email": "Email Kontak",
+    "instagram": "Instagram",
+    "youtubeUrl": "YouTube URL",
+    "spotifyUrl": "Spotify URL",
+    "youtubeMusicUrl": "YouTube Music URL",
+    "appleMusicUrl": "Apple Music URL",
+    "bandcampUrl": "Bandcamp URL",
+    "openMember": "Band kami sedang membuka lowongan untuk member baru",
+    "selectSearch": "Cari...",
+    "selectNotFound": "Tidak ditemukan"
+  },
+  "publicProfile": {
+    "defaultUser": "Pengguna",
+    "registeredBands": "Band Terdaftar ({count})",
+    "noBands": "Belum ada band terdaftar."
+  },
+  "bandDetail": {
+    "back": "Kembali",
+    "editBand": "Edit Band",
+    "edit": "Edit",
+    "by": "Oleh {name}",
+    "user": "Pengguna",
+    "founded": "Berdiri {year}",
+    "lookingForMembers": "Membuka Lowongan Member",
+    "about": "Tentang",
+    "openYouTube": "Buka YouTube",
+    "openYouTubeMusic": "Buka YouTube Music",
+    "openSpotify": "Buka Spotify",
+    "openAppleMusic": "Buka Apple Music",
+    "openBandcamp": "Buka di Bandcamp",
+    "contactSocial": "Kontak & Media Sosial",
+    "contactWhatsApp": "Hubungi via WhatsApp",
+    "similarBands": "Band Serupa"
+  },
+  "flagBand": {
+    "report": "Laporkan",
+    "reasonLabel": "Alasan laporan (opsional)",
+    "reasonPlaceholder": "Konten melanggar, band duplikat, dll.",
+    "submit": "Kirim Laporan",
+    "submitting": "Mengirim...",
+    "cancel": "Batal",
+    "done": "Laporan terkirim",
+    "genericError": "Terjadi kesalahan"
+  },
+  "bandInsights": {
+    "title": "AI Insights",
+    "analyze": "Analisis",
+    "analyzing": "Menganalisis...",
+    "error": "Gagal menganalisis band",
+    "targetAudience": "Target Pendengar",
+    "strengths": "Kelebihan",
+    "bookingPitch": "Booking Pitch",
+    "reset": "Reset",
+    "thanks": "Terima kasih!",
+    "accurate": "Hasilnya akurat?"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "Kelola user dan band",
+    "tabUsers": "Users",
+    "tabBands": "Bands",
+    "moderation": "Moderasi",
+    "aiMetrics": "AI Metrics",
+    "searchUserPlaceholder": "Cari email...",
+    "searchBandPlaceholder": "Cari nama band...",
+    "colEmail": "Email",
+    "colRole": "Role",
+    "colStatus": "Status",
+    "colReason": "Alasan",
+    "colBandName": "Nama Band",
+    "colLocation": "Lokasi",
+    "colOwner": "Owner",
+    "statusBanned": "Banned",
+    "statusActive": "Aktif",
+    "banReasonPlaceholder": "Alasan ban...",
+    "defaultBanReason": "Pelanggaran ketentuan",
+    "confirmDeleteBand": "Hapus band ini?",
+    "deleteBandBtn": "Hapus",
+    "noUsers": "Tidak ada user",
+    "noBands": "Tidak ada band",
+    "unban": "Unban",
+    "ban": "Ban"
+  },
+  "moderate": {
+    "title": "Moderasi Band",
+    "subtitle": "Band yang dilaporkan",
+    "awaitingReview": "{n} menunggu review",
+    "empty": "Tidak ada laporan yang menunggu review.",
+    "reason": "Alasan:",
+    "aiResult": "Hasil AI:",
+    "analyzing": "Menganalisis...",
+    "runAI": "✦ Jalankan AI Moderasi",
+    "approve": "Approve",
+    "reject": "Reject",
+    "checkBio": "Bio",
+    "checkPhoto": "Foto",
+    "checkDuplicate": "Duplikat"
+  },
+  "common": {
+    "allRightsReserved": "All rights reserved."
+  }
+}

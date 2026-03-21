@@ -2,12 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Camera, Loader2, Check, X } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 import { ImageCropper } from '@/components/ui/ImageCropper'
 import { Input } from '@/components/ui/Input'
 import { TextArea } from '@/components/ui/TextArea'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { Button } from '@/components/ui/Button'
 
 type UsernameStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid'
 
@@ -16,6 +19,7 @@ const USERNAME_RE = /^[a-z0-9_]{3,30}$/
 export default function SettingsPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const t = useTranslations('settings')
 
   const [displayName, setDisplayName] = useState('')
   const [bio, setBio] = useState('')
@@ -78,7 +82,7 @@ export default function SettingsPage() {
   function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 2 * 1024 * 1024) { setError('Ukuran foto maksimal 2 MB.'); return }
+    if (file.size > 2 * 1024 * 1024) { setError(t('errors.avatarSize')); return }
     setError(null)
     setCropSrc(URL.createObjectURL(file))
     if (fileRef.current) fileRef.current.value = ''
@@ -96,7 +100,7 @@ export default function SettingsPage() {
       .upload(filename, croppedFile, { upsert: true, contentType: 'image/webp' })
 
     if (uploadError) {
-      setError('Gagal upload foto: ' + uploadError.message)
+      setError(t('errors.avatarUpload', { message: uploadError.message }))
       setUploadingAvatar(false)
       return
     }
@@ -134,7 +138,7 @@ export default function SettingsPage() {
 
     if (!res.ok) {
       const { error: msg } = await res.json()
-      setError(msg ?? 'Gagal menyimpan')
+      setError(msg ?? t('errors.saveFailed'))
       return
     }
 
@@ -149,17 +153,17 @@ export default function SettingsPage() {
 
   const usernameHint = {
     idle: null,
-    checking: <span className="text-stone-400 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Mengecek...</span>,
-    available: <span className="text-emerald-600 flex items-center gap-1"><Check className="w-3 h-3" /> Tersedia</span>,
-    taken: <span className="text-red-500 flex items-center gap-1"><X className="w-3 h-3" /> Sudah dipakai</span>,
-    invalid: <span className="text-red-500">3–30 karakter, hanya huruf kecil, angka, dan _</span>,
+    checking: <span className="text-stone-400 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> {t('username.checking')}</span>,
+    available: <span className="text-emerald-600 flex items-center gap-1"><Check className="w-3 h-3" /> {t('username.available')}</span>,
+    taken: <span className="text-red-500 flex items-center gap-1"><X className="w-3 h-3" /> {t('username.taken')}</span>,
+    invalid: <span className="text-red-500">{t('username.invalid')}</span>,
   }[usernameStatus]
 
   const canSave = usernameStatus !== 'taken' && usernameStatus !== 'invalid' && usernameStatus !== 'checking'
 
   return (
     <div className="max-w-lg mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-1">Pengaturan Profil</h1>
+      <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-1">{t('title')}</h1>
       <p className="text-sm text-stone-500 dark:text-stone-400 mb-8">{user.email}</p>
 
       <form onSubmit={handleSave} className="space-y-6">
@@ -189,8 +193,8 @@ export default function SettingsPage() {
             <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarChange} />
           </div>
           <div>
-            <p className="text-sm font-medium text-stone-700 dark:text-stone-300">Foto Profil</p>
-            <p className="text-xs text-stone-400 mt-0.5">JPEG, PNG, atau WebP · Maks 2 MB</p>
+            <p className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('avatar')}</p>
+            <p className="text-xs text-stone-400 mt-0.5">{t('avatarHint')}</p>
           </div>
         </div>
 
@@ -210,41 +214,37 @@ export default function SettingsPage() {
 
         {/* Display name */}
         <Input
-          label="Nama Tampilan"
+          label={t('displayName')}
           type="text"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           maxLength={60}
-          placeholder="Nama yang terlihat publik"
+          placeholder={t('displayNamePlaceholder')}
         />
 
         {/* Bio */}
         <TextArea
-          label="Bio"
+          label={t('bio')}
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           maxLength={200}
           rows={3}
-          placeholder="Ceritakan sedikit tentang dirimu..."
+          placeholder={t('bioPlaceholder')}
           hint={`${bio.length}/200`}
         />
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={saving || !canSave}
-          className="w-full flex items-center justify-center gap-2 bg-amber-700 hover:bg-amber-800 disabled:opacity-60 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors min-h-11"
-        >
-          {saving ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : saved ? (
-            <><Check className="w-4 h-4" /> Tersimpan</>
-          ) : (
-            'Simpan Perubahan'
-          )}
-        </button>
+        <Button type="submit" disabled={!canSave} loading={saving} fullWidth size="lg">
+          {saving ? null : saved ? <><Check className="w-4 h-4" /> {t('saved')}</> : t('save')}
+        </Button>
       </form>
+
+      {/* Language */}
+      <div className="mt-10 pt-8 border-t border-stone-200 dark:border-stone-800">
+        <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100 mb-4">{t('language')}</h2>
+        <LanguageSwitcher />
+      </div>
 
       {cropSrc && (
         <ImageCropper

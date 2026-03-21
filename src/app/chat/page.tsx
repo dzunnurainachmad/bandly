@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useChat } from '@ai-sdk/react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { Send, Bot, User, MessageSquare, Trash2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
@@ -25,6 +26,7 @@ export default function ChatPage() {
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
   const isLoading = status === 'streaming' || status === 'submitted'
+  const t = useTranslations('chat')
 
   useEffect(() => {
     const stored = loadMessages()
@@ -33,9 +35,7 @@ export default function ChatPage() {
   }, [])
 
   useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
-    }
+    if (messages.length > 0) localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
   }, [messages])
 
   function handleClear() {
@@ -54,15 +54,15 @@ export default function ChatPage() {
     setInput('')
   }
 
+  const suggestions = t.raw('suggestions') as string[]
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col min-h-[calc(100vh-3.5rem)]">
       {/* Header */}
       <div className="text-center mb-8 relative">
         <MessageSquare className="w-10 h-10 text-amber-600 mx-auto mb-2" />
-        <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">Discover Band</h1>
-        <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
-          Tanya apa aja soal band Indonesia
-        </p>
+        <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">{t('title')}</h1>
+        <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">{t('subtitle')}</p>
         {messages.length > 0 && (
           <button
             type="button"
@@ -70,7 +70,7 @@ export default function ChatPage() {
             className="absolute right-0 top-0 flex items-center gap-1.5 text-xs text-stone-400 hover:text-red-500 transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            Hapus riwayat
+            {t('clearHistory')}
           </button>
         )}
       </div>
@@ -79,14 +79,9 @@ export default function ChatPage() {
       <div className="flex-1 space-y-4 mb-4">
         {messages.length === 0 && (
           <div className="text-center py-12 text-stone-400 dark:text-stone-500">
-            <p className="text-sm">Coba tanya seperti:</p>
+            <p className="text-sm">{t('tryAsk')}</p>
             <div className="flex flex-wrap justify-center gap-2 mt-3">
-              {[
-                'Band punk dari Jogja',
-                'Cari band yang butuh drummer',
-                'Band metal dari Bandung',
-                'Ada band jazz di Jakarta?',
-              ].map((q) => (
+              {suggestions.map((q) => (
                 <button
                   key={q}
                   type="button"
@@ -131,7 +126,6 @@ export default function ChatPage() {
                 )
               }
 
-              // Render detail card from getBandDetail
               if (part.type === 'tool-getBandDetail' && part.state === 'output-available') {
                 const result = part.output as { band?: Band }
                 const band = result?.band
@@ -169,14 +163,13 @@ export default function ChatPage() {
                         {band.contact_wa && <span>WhatsApp</span>}
                       </div>
                       {band.is_looking_for_members && (
-                        <p className="text-[10px] text-green-600 dark:text-green-400 mt-2">Mencari anggota baru</p>
+                        <p className="text-[10px] text-green-600 dark:text-green-400 mt-2">{t('lookingForMembers')}</p>
                       )}
                     </Link>
                   </div>
                 )
               }
 
-              // Render band cards from tool results
               if ((part.type === 'tool-searchBands' || part.type === 'tool-semanticSearch') && part.state === 'output-available') {
                 const result = part.output as { bands?: Band[] }
                 if (result?.bands && result.bands.length > 0) {
@@ -188,9 +181,7 @@ export default function ChatPage() {
                           href={`/bands/${band.id}`}
                           className="block bg-[#fefaf4] dark:bg-[#231d15] border border-stone-200 dark:border-stone-700 rounded-xl p-3 hover:border-amber-500 transition-colors"
                         >
-                          <p className="font-semibold text-sm text-stone-900 dark:text-stone-100">
-                            {band.name}
-                          </p>
+                          <p className="font-semibold text-sm text-stone-900 dark:text-stone-100">{band.name}</p>
                           {(band.city_name || band.province_name) && (
                             <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
                               {[band.city_name, band.province_name].filter(Boolean).join(', ')}
@@ -199,19 +190,14 @@ export default function ChatPage() {
                           {Array.isArray(band.genres) && band.genres.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-2">
                               {band.genres.map((g) => (
-                                <span
-                                  key={g.id}
-                                  className="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 px-2 py-0.5 rounded-full"
-                                >
+                                <span key={g.id} className="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 px-2 py-0.5 rounded-full">
                                   {g.name}
                                 </span>
                               ))}
                             </div>
                           )}
                           {band.is_looking_for_members && (
-                            <p className="text-[10px] text-green-600 dark:text-green-400 mt-1">
-                              Mencari anggota baru
-                            </p>
+                            <p className="text-[10px] text-green-600 dark:text-green-400 mt-1">{t('lookingForMembers')}</p>
                           )}
                         </Link>
                       ))}
@@ -247,7 +233,7 @@ export default function ChatPage() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Cari band... misal: band metal dari Bandung"
+            placeholder={t('placeholder')}
             className="flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-stone-400 text-stone-900 dark:text-stone-100"
           />
           <button

@@ -17,6 +17,8 @@ interface SelectProps {
   disabled?: boolean
   label?: string
   searchable?: boolean
+  searchPlaceholder?: string
+  notFoundText?: string
 }
 
 export function Select({
@@ -27,6 +29,8 @@ export function Select({
   disabled = false,
   label,
   searchable = false,
+  searchPlaceholder = 'Cari...',
+  notFoundText = 'Tidak ditemukan',
 }: SelectProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -101,7 +105,7 @@ export function Select({
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Cari..."
+                    placeholder={searchPlaceholder}
                     className="w-full bg-transparent text-sm text-stone-700 dark:text-stone-200 placeholder-stone-400 focus:outline-none"
                   />
                 </div>
@@ -127,7 +131,7 @@ export function Select({
 
             <div className={clsx('overflow-y-auto', searchable ? 'max-h-52' : 'max-h-56', !query && 'border-t border-stone-100 dark:border-stone-700')}>
               {filtered.length === 0 ? (
-                <p className="px-3 py-4 text-sm text-center text-stone-400 dark:text-stone-500">Tidak ditemukan</p>
+                <p className="px-3 py-4 text-sm text-center text-stone-400 dark:text-stone-500">{notFoundText}</p>
               ) : (
                 filtered.map((opt) => (
                   <button

@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
+import { Button } from '@/components/ui/Button'
 
 function GoogleIcon() {
   return (
@@ -23,6 +25,7 @@ export function LoginForm() {
   const router = useRouter()
   const params = useSearchParams()
   const next = params.get('next') ?? '/dashboard'
+  const t = useTranslations('login')
 
   const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login')
   const [email, setEmail] = useState('')
@@ -45,7 +48,7 @@ export function LoginForm() {
     if (error) {
       setError(error.message)
     } else {
-      setSuccess('Link reset password sudah dikirim ke email kamu.')
+      setSuccess(t('success.resetSent'))
     }
     setLoading(false)
   }
@@ -72,7 +75,7 @@ export function LoginForm() {
     setSuccess('')
 
     if (mode === 'register' && !agreedToTerms) {
-      setError('Kamu harus menyetujui Syarat & Ketentuan untuk mendaftar.')
+      setError(t('errors.mustAgreeTerms'))
       setLoading(false)
       return
     }
@@ -80,7 +83,7 @@ export function LoginForm() {
     if (mode === 'login') {
       const { error } = await supabaseBrowser.auth.signInWithPassword({ email, password })
       if (error) {
-        setError('Email atau password salah.')
+        setError(t('errors.invalidCredentials'))
       } else {
         router.push(next)
         router.refresh()
@@ -90,7 +93,7 @@ export function LoginForm() {
       if (error) {
         setError(error.message)
       } else {
-        setSuccess('Cek email kamu untuk konfirmasi akun.')
+        setSuccess(t('success.checkEmail'))
       }
     }
 
@@ -113,7 +116,7 @@ export function LoginForm() {
                   : 'text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200'
               }`}
             >
-              {m === 'login' ? 'Masuk' : 'Daftar'}
+              {m === 'login' ? t('signIn') : t('register')}
             </button>
           ))}
         </div>
@@ -126,15 +129,13 @@ export function LoginForm() {
           >
             ←
           </button>
-          <span className="text-sm font-semibold text-stone-700 dark:text-stone-300">Reset Password</span>
+          <span className="text-sm font-semibold text-stone-700 dark:text-stone-300">{t('forgotPassword')}</span>
         </div>
       )}
 
       {mode === 'forgot' ? (
         <form onSubmit={handleForgotPassword} className="space-y-4">
-          <p className="text-sm text-stone-500 dark:text-stone-400">
-            Masukkan email kamu dan kami akan kirimkan link untuk reset password.
-          </p>
+          <p className="text-sm text-stone-500 dark:text-stone-400">{t('forgotHint')}</p>
           <Input
             type="email"
             placeholder="Email"
@@ -153,30 +154,29 @@ export function LoginForm() {
               {success}
             </p>
           )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-amber-700 hover:bg-amber-800 text-white py-2.5 rounded-lg font-semibold text-sm transition-colors disabled:opacity-60"
-          >
-            {loading ? 'Mengirim...' : 'Kirim Link Reset'}
-          </button>
+          <Button type="submit" loading={loading} fullWidth size="lg">
+            {loading ? t('sending') : t('sendResetLink')}
+          </Button>
         </form>
       ) : (
         <>
           {/* Google OAuth */}
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="lg"
+            fullWidth
+            loading={googleLoading}
             onClick={handleGoogleLogin}
-            disabled={googleLoading}
-            className="w-full flex items-center justify-center gap-2.5 border border-stone-300 dark:border-stone-600 bg-[#fefaf4] dark:bg-stone-800 text-stone-700 dark:text-stone-200 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors disabled:opacity-60"
+            className="bg-[#fefaf4] dark:bg-stone-800 text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-700"
           >
             <GoogleIcon />
-            {googleLoading ? 'Mengalihkan...' : 'Lanjutkan dengan Google'}
-          </button>
+            {googleLoading ? t('redirecting') : t('continueWithGoogle')}
+          </Button>
 
           <div className="flex items-center gap-3 text-xs text-stone-400">
             <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
-            atau
+            {t('or')}
             <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
           </div>
 
@@ -216,7 +216,7 @@ export function LoginForm() {
                     onClick={() => { setMode('forgot'); setError(''); setSuccess('') }}
                     className="text-xs text-amber-600 hover:text-amber-800 dark:hover:text-amber-400 transition-colors"
                   >
-                    Lupa password?
+                    {t('forgotPasswordLink')}
                   </button>
                 </div>
               )}
@@ -229,9 +229,9 @@ export function LoginForm() {
                 align="start"
               >
                 <span className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
-                  Saya menyetujui{' '}
+                  {t('agreeTerms')}{' '}
                   <Link href="/terms" target="_blank" className="text-amber-700 dark:text-amber-500 underline hover:text-amber-800">
-                    Syarat & Ketentuan
+                    {t('terms')}
                   </Link>{' '}
                   BandTelusur
                 </span>
@@ -249,13 +249,15 @@ export function LoginForm() {
               </p>
             )}
 
-            <button
+            <Button
               type="submit"
-              disabled={loading || (mode === 'register' && !agreedToTerms)}
-              className="w-full bg-amber-700 hover:bg-amber-800 text-white py-2.5 rounded-lg font-semibold text-sm transition-colors disabled:opacity-60"
+              loading={loading}
+              disabled={mode === 'register' && !agreedToTerms}
+              fullWidth
+              size="lg"
             >
-              {loading ? 'Memproses...' : mode === 'login' ? 'Masuk' : 'Buat Akun'}
-            </button>
+              {loading ? t('processing') : mode === 'login' ? t('signIn') : t('createAccount')}
+            </Button>
           </form>
         </>
       )}

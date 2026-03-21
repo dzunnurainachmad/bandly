@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import { CheckCircle, XCircle, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type { ModerationVerdict } from '@/lib/schemas'
+import { Button } from '@/components/ui/Button'
 
 interface Flag {
   id: string
@@ -20,6 +22,7 @@ interface Flag {
 }
 
 export function ModerationList({ flags: initial }: { flags: Flag[] }) {
+  const t = useTranslations('moderate')
   const [flags, setFlags] = useState<Flag[]>(initial)
   const [running, setRunning] = useState<Record<string, boolean>>({})
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -62,7 +65,7 @@ export function ModerationList({ flags: initial }: { flags: Flag[] }) {
   if (flags.length === 0) {
     return (
       <p className="text-stone-500 dark:text-stone-400 text-sm py-8 text-center">
-        Tidak ada laporan yang menunggu review.
+        {t('empty')}
       </p>
     )
   }
@@ -83,7 +86,7 @@ export function ModerationList({ flags: initial }: { flags: Flag[] }) {
                 )}
                 {flag.reason && (
                   <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-                    Alasan: <span className="italic">{flag.reason}</span>
+                    {t('reason')} <span className="italic">{flag.reason}</span>
                   </p>
                 )}
               </div>
@@ -103,7 +106,7 @@ export function ModerationList({ flags: initial }: { flags: Flag[] }) {
                   className="flex items-center gap-1 text-xs font-medium text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 transition-colors"
                 >
                   {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                  Hasil AI: <span className={
+                  {t('aiResult')} <span className={
                     verdict.verdict === 'approve' ? 'text-green-600 dark:text-green-400' :
                     verdict.verdict === 'reject' ? 'text-red-600 dark:text-red-400' :
                     'text-amber-600 dark:text-amber-400'
@@ -116,19 +119,19 @@ export function ModerationList({ flags: initial }: { flags: Flag[] }) {
                     <div className="grid grid-cols-3 gap-2 pt-1">
                       <div>
                         <span className={verdict.checks.bio_quality.ok ? 'text-green-600' : 'text-red-500'}>
-                          {verdict.checks.bio_quality.ok ? '✓' : '✗'} Bio
+                          {verdict.checks.bio_quality.ok ? '✓' : '✗'} {t('checkBio')}
                         </span>
                         <p className="text-stone-400">{verdict.checks.bio_quality.notes}</p>
                       </div>
                       <div>
                         <span className={verdict.checks.photo_appropriate.ok ? 'text-green-600' : 'text-red-500'}>
-                          {verdict.checks.photo_appropriate.ok ? '✓' : '✗'} Foto
+                          {verdict.checks.photo_appropriate.ok ? '✓' : '✗'} {t('checkPhoto')}
                         </span>
                         <p className="text-stone-400">{verdict.checks.photo_appropriate.notes}</p>
                       </div>
                       <div>
                         <span className={verdict.checks.duplicate_risk.ok ? 'text-green-600' : 'text-red-500'}>
-                          {verdict.checks.duplicate_risk.ok ? '✓' : '✗'} Duplikat
+                          {verdict.checks.duplicate_risk.ok ? '✓' : '✗'} {t('checkDuplicate')}
                         </span>
                         <p className="text-stone-400">{verdict.checks.duplicate_risk.notes}</p>
                       </div>
@@ -141,30 +144,33 @@ export function ModerationList({ flags: initial }: { flags: Flag[] }) {
             {/* Actions */}
             <div className="flex items-center gap-2 pt-1">
               {!verdict && (
-                <button
+                <Button
+                  size="sm"
                   onClick={() => runModeration(flag)}
-                  disabled={running[flag.id]}
-                  className="inline-flex items-center gap-1.5 text-xs bg-amber-700 text-white px-3 py-1.5 rounded-lg hover:bg-amber-800 disabled:opacity-60 transition-colors"
+                  loading={running[flag.id]}
+                  className="text-xs"
                 >
-                  {running[flag.id] ? (
-                    <><Loader2 className="w-3 h-3 animate-spin" /> Menganalisis...</>
-                  ) : '✦ Jalankan AI Moderasi'}
-                </button>
+                  {running[flag.id] ? t('analyzing') : t('runAI')}
+                </Button>
               )}
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => updateStatus(flag, 'approved')}
                 disabled={updating[flag.id]}
-                className="inline-flex items-center gap-1 text-xs text-green-700 dark:text-green-400 border border-green-300 dark:border-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 disabled:opacity-60 transition-colors"
+                className="text-xs text-green-700 dark:text-green-400 border-green-300 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
               >
-                <CheckCircle className="w-3.5 h-3.5" /> Approve
-              </button>
-              <button
+                <CheckCircle className="w-3.5 h-3.5" /> {t('approve')}
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => updateStatus(flag, 'rejected')}
                 disabled={updating[flag.id]}
-                className="inline-flex items-center gap-1 text-xs text-red-600 dark:text-red-400 border border-red-200 dark:border-red-700 px-3 py-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-60 transition-colors"
+                className="text-xs text-red-600 dark:text-red-400 border-red-200 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
               >
-                <XCircle className="w-3.5 h-3.5" /> Reject
-              </button>
+                <XCircle className="w-3.5 h-3.5" /> {t('reject')}
+              </Button>
             </div>
           </div>
         )

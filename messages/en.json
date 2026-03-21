@@ -1,0 +1,342 @@
+{
+  "nav": {
+    "browse": "Browse",
+    "discover": "Discover AI",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "saved": "Saved",
+    "submit": "Register Band",
+    "submitShort": "Register",
+    "signOut": "Sign Out",
+    "signIn": "Sign In"
+  },
+  "home": {
+    "hero": {
+      "title": "Discover Bands\nAcross Indonesia",
+      "subtitle": "Explore hundreds of bands and music projects from Sabang to Merauke. Filter by province, city, and your favorite genre.",
+      "ctaBrowse": "Browse Bands",
+      "ctaSubmit": "Register Your Band"
+    },
+    "features": {
+      "title": "Key Features",
+      "subtitle": "Everything you need to discover and connect with bands in Indonesia.",
+      "location": { "title": "Location Filter", "desc": "Search bands by 34 provinces and hundreds of cities in Indonesia." },
+      "genre": { "title": "Genre Filter", "desc": "From Rock, Metal, Jazz, Dangdut to Electronic — all here." },
+      "member": { "title": "Find Members", "desc": "Bands looking for members are easy to find with a dedicated filter." },
+      "discoverAI": { "title": "Discover AI", "desc": "Ask AI for band recommendations — just describe the music you like." },
+      "bioGenerator": { "title": "AI Bio Generator", "desc": "Auto-generate your band bio with AI. Fill in the details and it's done." },
+      "player": { "title": "Listen Directly", "desc": "Play music from Spotify, YouTube, and Apple Music right on the band page." }
+    },
+    "aiCta": {
+      "title": "Not Sure What to Listen To?",
+      "subtitle": "Tell our AI your music taste and get Indonesian band recommendations just for you.",
+      "cta": "Try Discover AI"
+    },
+    "exploreGenres": "Explore Genres",
+    "footer": {
+      "tagline": "Indonesian band directory. Discover, register, and connect musicians from across the archipelago.",
+      "nav": "Navigation",
+      "popularGenres": "Popular Genres",
+      "terms": "Terms & Conditions",
+      "madeWith": "Made with passion for Indonesian music."
+    }
+  },
+  "browse": {
+    "title": "Browse Bands",
+    "clearAll": "Clear all",
+    "openMemberChip": "Looking for members",
+    "notFound": "No bands found",
+    "notFoundHint": "Try changing filters or",
+    "resetSearch": "reset search"
+  },
+  "sortBar": {
+    "bandsFound": "bands found",
+    "sortBy": "Sort:",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "nameAZ": "Name A–Z",
+    "nameZA": "Name Z–A"
+  },
+  "filterBar": {
+    "title": "Filter",
+    "reset": "Reset",
+    "searchPlaceholder": "Search band name...",
+    "province": "Province",
+    "allProvinces": "All Provinces",
+    "city": "City / Regency",
+    "allCities": "All Cities",
+    "genre": "Genre",
+    "allGenres": "All Genres",
+    "openMember": "Looking for members",
+    "selectSearch": "Search...",
+    "selectNotFound": "Not found"
+  },
+  "bandCard": {
+    "openBadge": "Open",
+    "openMemberBadge": "Open Member"
+  },
+  "saveBand": {
+    "removeTitle": "Remove from saved",
+    "saveTitle": "Save this band",
+    "saved": "Saved",
+    "save": "Save"
+  },
+  "playButton": {
+    "play": "Play Music",
+    "playing": "Now Playing"
+  },
+  "themeToggle": {
+    "light": "Light Mode",
+    "dark": "Dark Mode"
+  },
+  "floatingChat": {
+    "title": "Discover AI",
+    "clearHistory": "Clear history",
+    "openFull": "Open full",
+    "placeholder": "Ask about bands...",
+    "emptyHint": "Ask about Indonesian bands",
+    "suggestions": ["Punk bands from Jogja", "Metal bands Bandung", "Jazz bands Jakarta"],
+    "moreResults": "+{count} more →"
+  },
+  "dashboard": {
+    "publicProfile": "Public Profile",
+    "edit": "Edit",
+    "myBands": "My Bands",
+    "saved": "Saved",
+    "registerBand": "Register Band",
+    "noBands": "No bands registered yet",
+    "registerFirst": "Register your first band"
+  },
+  "saved": {
+    "title": "Saved Bands",
+    "empty": "No saved bands yet",
+    "emptyHint": "Browse bands and save the ones you like"
+  },
+  "login": {
+    "title": "Sign in to BandTelusur",
+    "subtitle": "Register and manage your band",
+    "signIn": "Sign In",
+    "register": "Register",
+    "forgotPassword": "Reset Password",
+    "forgotHint": "Enter your email and we'll send you a link to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "continueWithGoogle": "Continue with Google",
+    "redirecting": "Redirecting...",
+    "or": "or",
+    "forgotPasswordLink": "Forgot password?",
+    "agreeTerms": "I agree to the",
+    "terms": "Terms & Conditions",
+    "createAccount": "Create Account",
+    "processing": "Processing...",
+    "sending": "Sending...",
+    "errors": {
+      "invalidCredentials": "Invalid email or password.",
+      "mustAgreeTerms": "You must agree to the Terms & Conditions to register."
+    },
+    "success": {
+      "checkEmail": "Check your email to confirm your account.",
+      "resetSent": "Password reset link has been sent to your email."
+    }
+  },
+  "settings": {
+    "title": "Profile Settings",
+    "avatar": "Profile Photo",
+    "avatarHint": "JPEG, PNG, or WebP · Max 2 MB",
+    "displayName": "Display Name",
+    "displayNamePlaceholder": "Name visible to the public",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell a little about yourself...",
+    "save": "Save Changes",
+    "saved": "Saved",
+    "language": "Language",
+    "languageLabel": "Choose Language",
+    "username": {
+      "checking": "Checking...",
+      "available": "Available",
+      "taken": "Already taken",
+      "invalid": "3–30 characters, only lowercase letters, numbers, and _"
+    },
+    "errors": {
+      "avatarSize": "Photo size must not exceed 2 MB.",
+      "avatarUpload": "Failed to upload photo: {message}",
+      "saveFailed": "Failed to save"
+    }
+  },
+  "chat": {
+    "title": "Discover Band",
+    "subtitle": "Ask anything about Indonesian bands",
+    "clearHistory": "Clear history",
+    "tryAsk": "Try asking:",
+    "suggestions": [
+      "Punk bands from Jogja",
+      "Looking for a drummer",
+      "Metal bands from Bandung",
+      "Any jazz bands in Jakarta?"
+    ],
+    "placeholder": "Search bands... e.g. metal bands from Bandung",
+    "lookingForMembers": "Looking for new members"
+  },
+  "submit": {
+    "title": "Register Band / Music Project",
+    "subtitle": "Fill in the form below to register your band or music project to the BandTelusur directory.",
+    "fillFromUrl": "Auto-fill from URL",
+    "fillFromUrlHint": "Paste a band's website, Facebook, or YouTube link — AI will fill the form automatically.",
+    "analyzing": "Analyzing...",
+    "fillForm": "Fill Form",
+    "fillSuccess": "✓ Form filled from URL",
+    "uploading": "Uploading photo...",
+    "submitting": "Registering...",
+    "submitBtn": "Register Band",
+    "analyzingPhoto": "Analyzing photo...",
+    "photoGenreSuggestion": "Genre suggestions from photo:",
+    "errors": {
+      "photoSize": "Photo size must not exceed 5 MB.",
+      "nameRequired": "Band name is required.",
+      "fetchFailed": "Failed to fetch data",
+      "fillFromUrlFailed": "Failed to fill form from URL. Try again.",
+      "bioNameRequired": "Enter the band name first before generating bio.",
+      "bioFailed": "Failed to generate bio. Try again.",
+      "genericError": "An error occurred. Try again."
+    }
+  },
+  "editBand": {
+    "title": "Edit Band",
+    "cancel": "Cancel",
+    "uploading": "Uploading photo...",
+    "saving": "Saving...",
+    "saveBtn": "Save Changes",
+    "errors": {
+      "photoSize": "Photo size must not exceed 5 MB.",
+      "nameRequired": "Band name is required.",
+      "bioNameRequired": "Enter the band name first before generating bio.",
+      "bioFailed": "Failed to generate bio. Try again.",
+      "genericError": "An error occurred."
+    }
+  },
+  "deleteBand": {
+    "button": "Delete Band",
+    "confirm": "Delete \"{name}\"?",
+    "deleting": "Deleting...",
+    "yes": "Yes, Delete",
+    "cancel": "Cancel"
+  },
+  "bandForm": {
+    "photo": "Band Photo",
+    "photoUpload": "Click to upload photo",
+    "photoHint": "JPG, PNG, WebP · Max 5 MB",
+    "nameLabel": "Band / Project Name",
+    "namePlaceholder": "e.g. Burgerkill, Padi Reborn",
+    "bioLabel": "Bio / Description",
+    "generateBio": "Generate with AI",
+    "generating": "Generating...",
+    "bioPlaceholder": "Tell a little about your band...",
+    "formedYear": "Year Founded",
+    "province": "Province",
+    "provincePlaceholder": "Select province",
+    "city": "City / Regency",
+    "cityPlaceholder": "Select city",
+    "genre": "Genre (select all that apply)",
+    "genreEdit": "Genre",
+    "whatsapp": "WhatsApp Number",
+    "email": "Contact Email",
+    "instagram": "Instagram",
+    "youtubeUrl": "YouTube URL",
+    "spotifyUrl": "Spotify URL",
+    "youtubeMusicUrl": "YouTube Music URL",
+    "appleMusicUrl": "Apple Music URL",
+    "bandcampUrl": "Bandcamp URL",
+    "openMember": "Our band is currently looking for new members",
+    "selectSearch": "Search...",
+    "selectNotFound": "Not found"
+  },
+  "publicProfile": {
+    "defaultUser": "User",
+    "registeredBands": "Registered Bands ({count})",
+    "noBands": "No bands registered yet."
+  },
+  "bandDetail": {
+    "back": "Back",
+    "editBand": "Edit Band",
+    "edit": "Edit",
+    "by": "By {name}",
+    "user": "User",
+    "founded": "Founded {year}",
+    "lookingForMembers": "Open for Members",
+    "about": "About",
+    "openYouTube": "Open YouTube",
+    "openYouTubeMusic": "Open YouTube Music",
+    "openSpotify": "Open Spotify",
+    "openAppleMusic": "Open Apple Music",
+    "openBandcamp": "Open on Bandcamp",
+    "contactSocial": "Contact & Social Media",
+    "contactWhatsApp": "Contact via WhatsApp",
+    "similarBands": "Similar Bands"
+  },
+  "flagBand": {
+    "report": "Report",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholder": "Violating content, duplicate band, etc.",
+    "submit": "Submit Report",
+    "submitting": "Submitting...",
+    "cancel": "Cancel",
+    "done": "Report submitted",
+    "genericError": "An error occurred"
+  },
+  "bandInsights": {
+    "title": "AI Insights",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing...",
+    "error": "Failed to analyze band",
+    "targetAudience": "Target Audience",
+    "strengths": "Strengths",
+    "bookingPitch": "Booking Pitch",
+    "reset": "Reset",
+    "thanks": "Thank you!",
+    "accurate": "Is this accurate?"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "Manage users and bands",
+    "tabUsers": "Users",
+    "tabBands": "Bands",
+    "moderation": "Moderation",
+    "aiMetrics": "AI Metrics",
+    "searchUserPlaceholder": "Search email...",
+    "searchBandPlaceholder": "Search band name...",
+    "colEmail": "Email",
+    "colRole": "Role",
+    "colStatus": "Status",
+    "colReason": "Reason",
+    "colBandName": "Band Name",
+    "colLocation": "Location",
+    "colOwner": "Owner",
+    "statusBanned": "Banned",
+    "statusActive": "Active",
+    "banReasonPlaceholder": "Ban reason...",
+    "defaultBanReason": "Terms violation",
+    "confirmDeleteBand": "Delete this band?",
+    "deleteBandBtn": "Delete",
+    "noUsers": "No users found",
+    "noBands": "No bands found",
+    "unban": "Unban",
+    "ban": "Ban"
+  },
+  "moderate": {
+    "title": "Band Moderation",
+    "subtitle": "Reported bands",
+    "awaitingReview": "{n} awaiting review",
+    "empty": "No reports awaiting review.",
+    "reason": "Reason:",
+    "aiResult": "AI Result:",
+    "analyzing": "Analyzing...",
+    "runAI": "✦ Run AI Moderation",
+    "approve": "Approve",
+    "reject": "Reject",
+    "checkBio": "Bio",
+    "checkPhoto": "Photo",
+    "checkDuplicate": "Duplicate"
+  },
+  "common": {
+    "allRightsReserved": "All rights reserved."
+  }
+}

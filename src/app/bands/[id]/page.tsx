@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 import { MapPin, Calendar, Instagram, Music, UserPlus, ArrowLeft, Pencil, ExternalLink, Mail } from 'lucide-react'
 
 function YoutubeIcon({ className }: { className?: string }) {
@@ -26,10 +27,11 @@ interface Props {
 
 export default async function BandDetailPage({ params }: Props) {
   const { id } = await params
-  const [band, supabase, similarBands] = await Promise.all([
+  const [band, supabase, similarBands, t] = await Promise.all([
     getBandById(id),
     createSupabaseServerClient(),
     getSimilarBands(id),
+    getTranslations('bandDetail'),
   ])
 
   if (!band) notFound()
@@ -71,16 +73,16 @@ export default async function BandDetailPage({ params }: Props) {
           href="/browse"
           className="inline-flex items-center gap-1 text-sm text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors min-h-11 py-2"
         >
-          <ArrowLeft className="w-4 h-4" /> Kembali
+          <ArrowLeft className="w-4 h-4" /> {t('back')}
         </Link>
         <div className="flex items-center gap-2">
           <SaveBandButton bandId={id} initialSaved={isSaved} isLoggedIn={!!user} />
           {isOwner && (
             <Link
               href={`/bands/${id}/edit`}
-              className="inline-flex items-center gap-1.5 text-sm border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-300 px-3 py-2 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors min-h-11"
+              className="inline-flex items-center gap-1.5 text-xs border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-300 px-2.5 py-1.5 rounded-lg hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-500 transition-colors"
             >
-              <Pencil className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Edit Band</span><span className="sm:hidden">Edit</span>
+              <Pencil className="w-3.5 h-3.5" /> <span className="hidden sm:inline">{t('editBand')}</span><span className="sm:hidden">{t('edit')}</span>
             </Link>
           )}
         </div>
@@ -106,7 +108,7 @@ export default async function BandDetailPage({ params }: Props) {
               <h1 className="text-xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100">{band.name}</h1>
               {ownerProfile && band.user_id && (
                 <Link href={`/u/${ownerProfile.username ?? band.user_id}`} className="text-xs text-stone-400 hover:text-amber-600 transition-colors mt-0.5 inline-block">
-                  Oleh {ownerProfile.display_name ?? 'Pengguna'}
+                  {t('by', { name: ownerProfile.display_name ?? t('user') })}
                 </Link>
               )}
               {(band.city_name || band.province_name) && (
@@ -118,7 +120,7 @@ export default async function BandDetailPage({ params }: Props) {
               {band.formed_year && (
                 <p className="flex items-center gap-1 text-stone-500 dark:text-stone-400 text-sm mt-0.5">
                   <Calendar className="w-3.5 h-3.5" />
-                  Berdiri {band.formed_year}
+                  {t('founded', { year: band.formed_year })}
                 </p>
               )}
             </div>
@@ -136,7 +138,7 @@ export default async function BandDetailPage({ params }: Props) {
               {band.is_looking_for_members && (
                 <Badge variant="green" className="text-sm px-3 py-1">
                   <UserPlus className="w-4 h-4 mr-1.5" />
-                  Membuka Lowongan Member
+                  {t('lookingForMembers')}
                 </Badge>
               )}
             </div>
@@ -154,7 +156,7 @@ export default async function BandDetailPage({ params }: Props) {
           {/* Bio */}
           {band.bio && (
             <div>
-              <h2 className="font-semibold text-stone-700 dark:text-stone-300 mb-2">Tentang</h2>
+              <h2 className="font-semibold text-stone-700 dark:text-stone-300 mb-2">{t('about')}</h2>
               <p className="text-stone-600 dark:text-stone-400 leading-relaxed whitespace-pre-line">{band.bio}</p>
             </div>
           )}
@@ -195,14 +197,14 @@ export default async function BandDetailPage({ params }: Props) {
                 <a href={band.youtube} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 border border-stone-300 dark:border-stone-600 text-stone-700 dark:text-stone-300 px-4 py-2 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-sm"
                 >
-                  <YoutubeIcon className="w-4 h-4 text-red-500" /> Buka YouTube
+                  <YoutubeIcon className="w-4 h-4 text-red-500" /> {t('openYouTube')}
                 </a>
               )}
               {band.youtube_music && (
                 <a href={band.youtube_music} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 border border-stone-300 dark:border-stone-600 text-stone-700 dark:text-stone-300 px-4 py-2 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-sm"
                 >
-                  <YoutubeIcon className="w-4 h-4 text-red-500" /> Buka YouTube Music
+                  <YoutubeIcon className="w-4 h-4 text-red-500" /> {t('openYouTubeMusic')}
                 </a>
               )}
             </div>
@@ -231,7 +233,7 @@ export default async function BandDetailPage({ params }: Props) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 border border-stone-300 text-stone-700 px-4 py-2 rounded-lg hover:bg-stone-50 transition-colors text-sm"
             >
-              <Music className="w-4 h-4" /> Buka Spotify
+              <Music className="w-4 h-4" /> {t('openSpotify')}
             </a>
           ) : null}
 
@@ -259,7 +261,7 @@ export default async function BandDetailPage({ params }: Props) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 border border-stone-300 dark:border-stone-600 text-stone-700 dark:text-stone-300 px-4 py-2 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-sm"
             >
-              <Music className="w-4 h-4 text-pink-500" /> Buka Apple Music
+              <Music className="w-4 h-4 text-pink-500" /> {t('openAppleMusic')}
             </a>
           ) : null}
 
@@ -276,14 +278,14 @@ export default async function BandDetailPage({ params }: Props) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 border border-teal-400 text-teal-700 dark:text-teal-400 px-4 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors text-sm font-medium"
               >
-                <ExternalLink className="w-4 h-4" /> Buka di Bandcamp
+                <ExternalLink className="w-4 h-4" /> {t('openBandcamp')}
               </a>
             </div>
           )}
 
           {/* ── Contact & Social ──────────────────────────────── */}
           <div>
-            <h2 className="font-semibold text-stone-700 dark:text-stone-300 mb-3">Kontak & Media Sosial</h2>
+            <h2 className="font-semibold text-stone-700 dark:text-stone-300 mb-3">{t('contactSocial')}</h2>
             <div className="flex flex-wrap gap-2">
               {waLink && (
                 <a
@@ -292,7 +294,7 @@ export default async function BandDetailPage({ params }: Props) {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-emerald-500 text-white px-4 py-2.5 rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium min-h-11"
                 >
-                  Hubungi via WhatsApp
+                  {t('contactWhatsApp')}
                 </a>
               )}
               {band.contact_email && (
@@ -346,7 +348,7 @@ export default async function BandDetailPage({ params }: Props) {
       {/* Similar Bands */}
       {similarBands.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 mb-4">Band Serupa</h2>
+          <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 mb-4">{t('similarBands')}</h2>
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {similarBands.map((b) => (
               <BandCard key={b.id} band={b} />

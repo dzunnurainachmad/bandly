@@ -2,11 +2,13 @@
 
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Moon, Sun } from 'lucide-react'
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const t = useTranslations('themeToggle')
 
   useEffect(() => setMounted(true), [])
   if (!mounted) return <div className="w-9 h-9" />
@@ -21,7 +23,7 @@ export function ThemeToggle() {
     >
       {isDark ? <Sun className="w-5 h-5 shrink-0" /> : <Moon className="w-5 h-5 shrink-0" />}
       <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover/sidebar:max-w-[200px] group-hover/sidebar:opacity-100 group-hover/sidebar:ml-3 transition-all duration-200 text-sm leading-none">
-        {isDark ? 'Mode Terang' : 'Mode Gelap'}
+        {isDark ? t('light') : t('dark')}
       </span>
     </button>
   )

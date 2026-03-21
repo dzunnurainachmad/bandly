@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Users, Music, ShieldX, ShieldCheck, Trash2, Search, Flag, BarChart2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 import { deleteBand } from '@/lib/queries'
 import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
 
 interface Profile {
   id: string
@@ -33,6 +35,7 @@ interface Props {
 
 export function AdminDashboard({ users: initialUsers, bands: initialBands }: Props) {
   const router = useRouter()
+  const t = useTranslations('admin')
   const [tab, setTab] = useState<'users' | 'bands'>('users')
   const [users, setUsers] = useState(initialUsers)
   const [bands, setBands] = useState(initialBands)
@@ -44,7 +47,7 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
     setLoading(user.id)
     const update = user.is_banned
       ? { is_banned: false, banned_reason: null, banned_at: null }
-      : { is_banned: true, banned_reason: banReason[user.id] || 'Pelanggaran ketentuan', banned_at: new Date().toISOString() }
+      : { is_banned: true, banned_reason: banReason[user.id] || t('defaultBanReason'), banned_at: new Date().toISOString() }
 
     await supabaseBrowser.from('profiles').update(update).eq('id', user.id)
     setUsers((prev) => prev.map((u) => u.id === user.id ? { ...u, ...update } : u))
@@ -52,7 +55,7 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
   }
 
   async function handleDeleteBand(id: string) {
-    if (!confirm('Hapus band ini?')) return
+    if (!confirm(t('confirmDeleteBand'))) return
     setLoading(id)
     await deleteBand(id)
     setBands((prev) => prev.filter((b) => b.id !== id))
@@ -72,7 +75,7 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
       {/* Tabs */}
       <div className="flex items-center gap-3 mb-6">
       <div className="flex gap-1 bg-stone-100 dark:bg-stone-800 p-1 rounded-xl w-fit">
-        {([['users', 'Users', Users], ['bands', 'Bands', Music]] as const).map(([key, label, Icon]) => (
+        {([['users', t('tabUsers'), Users], ['bands', t('tabBands'), Music]] as const).map(([key, label, Icon]) => (
           <button
             key={key}
             onClick={() => { setTab(key); setQuery('') }}
@@ -94,13 +97,13 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
         href="/admin/moderate"
         className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-400 transition-colors"
       >
-        <Flag className="w-4 h-4" /> Moderasi
+        <Flag className="w-4 h-4" /> {t('moderation')}
       </Link>
       <Link
         href="/admin/ai-metrics"
         className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-400 transition-colors"
       >
-        <BarChart2 className="w-4 h-4" /> AI Metrics
+        <BarChart2 className="w-4 h-4" /> {t('aiMetrics')}
       </Link>
       </div>
 
@@ -110,7 +113,7 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={tab === 'users' ? 'Cari email...' : 'Cari nama band...'}
+          placeholder={tab === 'users' ? t('searchUserPlaceholder') : t('searchBandPlaceholder')}
           leftIcon={<Search className="w-4 h-4" />}
         />
       </div>
@@ -121,10 +124,10 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
           <table className="w-full text-sm min-w-150">
             <thead className="bg-stone-50 dark:bg-stone-800 border-b border-stone-200 dark:border-stone-700">
               <tr>
-                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">Email</th>
-                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">Role</th>
-                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">Status</th>
-                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">Alasan</th>
+                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">{t('colEmail')}</th>
+                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">{t('colRole')}</th>
+                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">{t('colStatus')}</th>
+                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">{t('colReason')}</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -143,16 +146,16 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
                   </td>
                   <td className="px-4 py-3">
                     {user.is_banned ? (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 font-medium">Banned</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 font-medium">{t('statusBanned')}</span>
                     ) : (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 font-medium">Aktif</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 font-medium">{t('statusActive')}</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
                     {!user.is_banned && (
                       <Input
                         type="text"
-                        placeholder="Alasan ban..."
+                        placeholder={t('banReasonPlaceholder')}
                         value={banReason[user.id] ?? ''}
                         onChange={(e) => setBanReason((r) => ({ ...r, [user.id]: e.target.value }))}
                         className="text-xs px-2 py-1 min-w-24"
@@ -174,8 +177,8 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
                         }`}
                       >
                         {user.is_banned
-                          ? <><ShieldCheck className="w-3.5 h-3.5" /> Unban</>
-                          : <><ShieldX className="w-3.5 h-3.5" /> Ban</>
+                          ? <><ShieldCheck className="w-3.5 h-3.5" /> {t('unban')}</>
+                          : <><ShieldX className="w-3.5 h-3.5" /> {t('ban')}</>
                         }
                       </button>
                     )}
@@ -183,7 +186,7 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
                 </tr>
               ))}
               {filteredUsers.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-stone-400">Tidak ada user</td></tr>
+                <tr><td colSpan={5} className="px-4 py-8 text-center text-stone-400">{t('noUsers')}</td></tr>
               )}
             </tbody>
           </table>
@@ -196,9 +199,9 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
           <table className="w-full text-sm min-w-150">
             <thead className="bg-stone-50 dark:bg-stone-800 border-b border-stone-200 dark:border-stone-700">
               <tr>
-                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">Nama Band</th>
-                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">Lokasi</th>
-                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">Owner</th>
+                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">{t('colBandName')}</th>
+                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">{t('colLocation')}</th>
+                <th className="text-left px-4 py-3 text-stone-500 dark:text-stone-400 font-medium">{t('colOwner')}</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -213,19 +216,21 @@ export function AdminDashboard({ users: initialUsers, bands: initialBands }: Pro
                     </td>
                     <td className="px-4 py-3 text-stone-500 dark:text-stone-400 text-xs">{ownerEmail ?? '—'}</td>
                     <td className="px-4 py-3 text-right">
-                      <button
+                      <Button
+                        variant="danger-ghost"
+                        size="sm"
                         onClick={() => handleDeleteBand(band.id)}
-                        disabled={loading === band.id}
-                        className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-100 transition-colors disabled:opacity-50"
+                        loading={loading === band.id}
+                        className="text-xs"
                       >
-                        <Trash2 className="w-3.5 h-3.5" /> Hapus
-                      </button>
+                        <Trash2 className="w-3.5 h-3.5" /> {t('deleteBandBtn')}
+                      </Button>
                     </td>
                   </tr>
                 )
               })}
               {filteredBands.length === 0 && (
-                <tr><td colSpan={4} className="px-4 py-8 text-center text-stone-400">Tidak ada band</td></tr>
+                <tr><td colSpan={4} className="px-4 py-8 text-center text-stone-400">{t('noBands')}</td></tr>
               )}
             </tbody>
           </table>

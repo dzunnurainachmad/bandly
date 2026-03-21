@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Trash2 } from 'lucide-react'
 import { deleteBand } from '@/lib/queries'
+import { Button } from '@/components/ui/Button'
 
 interface Props {
   bandId: string
@@ -15,6 +17,7 @@ export function DeleteBandButton({ bandId, bandName, redirectTo = '/dashboard' }
   const router = useRouter()
   const [confirm, setConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
+  const t = useTranslations('deleteBand')
 
   async function handleDelete() {
     setLoading(true)
@@ -31,31 +34,21 @@ export function DeleteBandButton({ bandId, bandName, redirectTo = '/dashboard' }
   if (confirm) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-sm text-stone-500 dark:text-stone-400">Hapus &quot;{bandName}&quot;?</span>
-        <button
-          onClick={handleDelete}
-          disabled={loading}
-          className="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg transition-colors disabled:opacity-60"
-        >
-          {loading ? 'Menghapus...' : 'Ya, Hapus'}
-        </button>
-        <button
-          onClick={() => setConfirm(false)}
-          className="text-sm border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 px-3 py-1.5 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
-        >
-          Batal
-        </button>
+        <span className="text-sm text-stone-500 dark:text-stone-400">{t('confirm', { name: bandName })}</span>
+        <Button variant="danger" size="sm" onClick={handleDelete} loading={loading}>
+          {loading ? t('deleting') : t('yes')}
+        </Button>
+        <Button variant="secondary" size="sm" onClick={() => setConfirm(false)}>
+          {t('cancel')}
+        </Button>
       </div>
     )
   }
 
   return (
-    <button
-      onClick={() => setConfirm(true)}
-      className="inline-flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors"
-    >
+    <Button variant="danger-ghost" size="sm" onClick={() => setConfirm(true)}>
       <Trash2 className="w-4 h-4" />
-      Hapus Band
-    </button>
+      {t('button')}
+    </Button>
   )
 }
