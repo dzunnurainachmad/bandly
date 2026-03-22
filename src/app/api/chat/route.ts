@@ -1,6 +1,7 @@
 import { streamText, tool, stepCountIs, convertToModelMessages } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { z } from 'zod/v4'
+import * as Sentry from '@sentry/nextjs'
 import { supabase } from '@/lib/supabase'
 import { generateEmbedding } from '@/lib/embeddings'
 import { CHAT_SYSTEM_PROMPT, PROMPT_VERSIONS } from '@/lib/prompts'
@@ -12,6 +13,7 @@ export async function POST(req: Request) {
   if (!allowed) return rateLimitResponse()
 
   const { messages } = await req.json()
+  Sentry.setTag('feature', 'ai-chat')
   const modelMessages = await convertToModelMessages(messages)
   const startedAt = Date.now()
 
@@ -45,7 +47,10 @@ export async function POST(req: Request) {
           if (bio_search) query = query.ilike('bio', `%${bio_search}%`)
 
           const { data, error } = await query
-          if (error) return { error: error.message, bands: [] }
+          if (error) {
+            Sentry.captureException(error, { tags: { tool: 'searchBands' } })
+            return { error: error.message, bands: [] }
+          }
 
           let bands = data ?? []
 
@@ -86,7 +91,10 @@ export async function POST(req: Request) {
             .eq('id', id)
             .single()
 
-          if (error || !data) return { error: 'Band tidak ditemukan' }
+          if (error || !data) {
+            if (error) Sentry.captureException(error, { tags: { tool: 'getBandDetail' } })
+            return { error: 'Band tidak ditemukan' }
+          }
 
           return {
             band: {
@@ -124,7 +132,10 @@ export async function POST(req: Request) {
             match_threshold: 0.3,
             match_count: 20,
           })
-          if (error) return { error: error.message, bands: [] }
+          if (error) {
+            Sentry.captureException(error, { tags: { tool: 'semanticSearch' } })
+            return { error: error.message, bands: [] }
+          }
 
           let bands = data ?? []
 

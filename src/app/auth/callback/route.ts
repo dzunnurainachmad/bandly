@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 
 export async function GET(request: Request) {
@@ -12,6 +13,7 @@ export async function GET(request: Request) {
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`)
     }
+    Sentry.captureException(error, { tags: { feature: 'auth', step: 'exchange_code' } })
   }
 
   return NextResponse.redirect(`${origin}/login?error=auth`)
