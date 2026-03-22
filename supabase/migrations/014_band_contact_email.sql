@@ -1,4 +1,0 @@
--- ============================================================
--- BANDS — add contact email
--- (column contact_email + bands_view now defined in 001_schema.sql)
--- ============================================================

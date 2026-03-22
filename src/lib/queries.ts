@@ -164,11 +164,14 @@ export async function getSimilarBands(bandId: string, count = 6): Promise<Band[]
   return data ?? []
 }
 
-export async function getBandById(id: string): Promise<Band | null> {
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+export async function getBandById(idOrUsername: string): Promise<Band | null> {
+  const col = UUID_RE.test(idOrUsername) ? 'id' : 'username'
   const { data, error } = await supabase
     .from('bands_view')
     .select('*')
-    .eq('id', id)
+    .eq(col, idOrUsername)
     .single()
   if (error) return null
   return data
@@ -176,6 +179,7 @@ export async function getBandById(id: string): Promise<Band | null> {
 
 export async function createBand(band: {
   name: string
+  username: string
   bio?: string
   formed_year?: number
   province_id?: number
@@ -191,7 +195,7 @@ export async function createBand(band: {
   photo_url?: string
   is_looking_for_members?: boolean
   genre_ids: number[]
-}) {
+}): Promise<{ id: string; username: string | null }> {
   const { genre_ids, ...bandData } = band
 
   const { data: { user } } = await supabaseBrowser.auth.getUser()
@@ -199,7 +203,7 @@ export async function createBand(band: {
   const { data, error } = await supabaseBrowser
     .from('bands')
     .insert({ ...bandData, user_id: user?.id })
-    .select('id')
+    .select('id, username')
     .single()
 
   if (error) throw error
@@ -218,7 +222,7 @@ export async function createBand(band: {
     body: JSON.stringify({ bandId: data.id }),
   }).catch(() => {})
 
-  return data.id
+  return { id: data.id, username: data.username }
 }
 
 export async function deleteBand(id: string) {
@@ -228,6 +232,7 @@ export async function deleteBand(id: string) {
 
 export async function updateBand(id: string, band: {
   name: string
+  username: string
   bio?: string | null
   formed_year?: number | null
   province_id?: number | null

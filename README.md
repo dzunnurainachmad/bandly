@@ -68,14 +68,12 @@ supabase/migrations/005_admin.sql
 supabase/migrations/006_embeddings.sql
 supabase/migrations/007_filter_bands_by_genre.sql
 supabase/migrations/008_ai_logs.sql
-supabase/migrations/009_band_insights_cache.sql
-supabase/migrations/010_ai_feedback.sql
-supabase/migrations/011_agent_tables.sql
-supabase/migrations/012_profiles_extended.sql
-supabase/migrations/013_profiles_username.sql
-supabase/migrations/014_band_contact_email.sql
-supabase/migrations/015_saved_bands.sql
-supabase/migrations/016_count_bands_by_genre.sql
+supabase/migrations/009_ai_feedback.sql
+supabase/migrations/010_agent_tables.sql
+supabase/migrations/011_profiles_extended.sql
+supabase/migrations/012_profiles_username.sql
+supabase/migrations/013_saved_bands.sql
+supabase/migrations/014_count_bands_by_genre.sql
 ```
 
 ### 4. Set admin pertama

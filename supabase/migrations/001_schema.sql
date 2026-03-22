@@ -30,6 +30,7 @@ create table bands (
   id                     uuid primary key default gen_random_uuid(),
   user_id                uuid references auth.users(id) on delete set null,
   name                   text not null,
+  username               text not null unique,
   bio                    text,
   formed_year            integer,
   province_id            integer references provinces(id),
@@ -48,7 +49,8 @@ create table bands (
   insights               jsonb,
   insights_cached_at     timestamptz,
   created_at             timestamptz default now(),
-  updated_at             timestamptz default now()
+  updated_at             timestamptz default now(),
+  constraint band_username_format check (username ~ '^[a-z0-9_]{3,30}$')
 );
 
 -- Band <-> Genre (many-to-many)
@@ -62,10 +64,11 @@ create table band_genres (
 create index on bands(user_id);
 create index on bands(province_id);
 create index on bands(city_id);
+create index on bands(username);
 create index on bands(is_looking_for_members);
 create index on band_genres(genre_id);
 
--- View: bands with province, city, genres
+-- View: bands with province, city, genres, and owner info
 create view bands_view as
 select
   b.id,
@@ -94,10 +97,14 @@ select
   coalesce(
     json_agg(json_build_object('id', g.id, 'name', g.name, 'slug', g.slug))
     filter (where g.id is not null), '[]'
-  ) as genres
+  ) as genres,
+  b.username,
+  pr.display_name as owner_display_name,
+  pr.username     as owner_username
 from bands b
 left join provinces  p  on p.id  = b.province_id
 left join cities     c  on c.id  = b.city_id
+left join profiles   pr on pr.id = b.user_id
 left join band_genres bg on bg.band_id = b.id
 left join genres     g  on g.id  = bg.genre_id
-group by b.id, p.name, p.slug, c.name, c.slug;
+group by b.id, p.name, p.slug, c.name, c.slug, pr.display_name, pr.username;

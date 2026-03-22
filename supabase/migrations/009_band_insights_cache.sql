@@ -1,4 +1,0 @@
--- ============================================================
--- CACHE AI INSIGHTS PER BAND
--- (columns insights + insights_cached_at now defined in 001_schema.sql)
--- ============================================================

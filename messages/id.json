@@ -74,7 +74,8 @@
   },
   "bandCard": {
     "openBadge": "Open",
-    "openMemberBadge": "Open Member"
+    "openMemberBadge": "Open Member",
+    "by": "oleh {name}"
   },
   "saveBand": {
     "removeTitle": "Hapus dari tersimpan",
@@ -227,6 +228,16 @@
     "photoHint": "JPG, PNG, WebP · Maks 5 MB",
     "nameLabel": "Nama Band / Project",
     "namePlaceholder": "Contoh: Burgerkill, Padi Reborn",
+    "username": {
+      "label": "Username Band",
+      "placeholder": "navicula",
+      "hint": "Digunakan untuk URL band, misal: /bands/navicula",
+      "checking": "Mengecek...",
+      "available": "Tersedia",
+      "taken": "Sudah dipakai",
+      "invalid": "3–30 karakter, huruf kecil, angka, dan _",
+      "errorRequired": "Username band wajib diisi"
+    },
     "bioLabel": "Bio / Deskripsi",
     "generateBio": "Generate dengan AI",
     "generating": "Generating...",

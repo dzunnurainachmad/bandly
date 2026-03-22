@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { ImagePlus, Sparkles, X, Globe, Loader2 } from 'lucide-react'
@@ -33,8 +33,12 @@ export function SubmitForm() {
   const [photoSuggestions, setPhotoSuggestions] = useState<{ suggested_genres: string[]; vibe_tags: string[] } | null>(null)
   const [analyzingPhoto, setAnalyzingPhoto] = useState(false)
 
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle')
+  const usernameTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const [form, setForm] = useState({
     name: '',
+    username: '',
     bio: '',
     formed_year: '',
     province_id: '',
@@ -68,6 +72,20 @@ export function SubmitForm() {
   function set(field: string, value: unknown) {
     setForm((f) => ({ ...f, [field]: value }))
   }
+
+  const handleUsernameChange = useCallback((val: string) => {
+    const lower = val.toLowerCase().replace(/[^a-z0-9_]/g, '')
+    set('username', lower)
+    if (usernameTimer.current) clearTimeout(usernameTimer.current)
+    if (!lower) { setUsernameStatus('idle'); return }
+    if (!/^[a-z0-9_]{3,30}$/.test(lower)) { setUsernameStatus('invalid'); return }
+    setUsernameStatus('checking')
+    usernameTimer.current = setTimeout(async () => {
+      const res = await fetch(`/api/bands/check-username?username=${lower}`)
+      const { available } = await res.json()
+      setUsernameStatus(available ? 'available' : 'taken')
+    }, 400)
+  }, [])
 
   function toggleGenre(id: number) {
     setForm((f) => ({
@@ -132,6 +150,10 @@ export function SubmitForm() {
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!form.name.trim()) return setError(t('errors.nameRequired'))
+    if (!form.username) return setError(f('username.errorRequired'))
+    if (usernameStatus === 'invalid') return setError(f('username.invalid'))
+    if (usernameStatus === 'taken') return setError(f('username.taken'))
+    if (usernameStatus === 'checking') return setError(f('username.checking'))
     setSubmitting(true)
     setError('')
 
@@ -143,8 +165,9 @@ export function SubmitForm() {
         setUploading(false)
       }
 
-      const id = await createBand({
+      const { id, username } = await createBand({
         name: form.name.trim(),
+        username: form.username,
         bio: form.bio || undefined,
         formed_year: form.formed_year ? Number(form.formed_year) : undefined,
         province_id: form.province_id ? Number(form.province_id) : undefined,
@@ -162,7 +185,7 @@ export function SubmitForm() {
         genre_ids: form.genre_ids,
       })
       fetch('/api/embeddings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bandId: id }) })
-      router.push(`/bands/${id}`)
+      router.push(`/bands/${username ?? id}`)
     } catch (err) {
       setError((err as Error).message ?? t('errors.genericError'))
       setSubmitting(false)
@@ -355,6 +378,33 @@ export function SubmitForm() {
           {f('nameLabel')} <span className="text-red-500">*</span>
         </label>
         <Input type="text" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder={f('namePlaceholder')} />
+      </div>
+
+      {/* Username */}
+      <div>
+        <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">{f('username.label')} <span className="text-red-500">*</span></label>
+        <Input
+          type="text"
+          value={form.username}
+          onChange={(e) => handleUsernameChange(e.target.value)}
+          placeholder={f('username.placeholder')}
+          prefix="@"
+        />
+        {form.username ? (
+          <p className={`text-xs mt-1 ${
+            usernameStatus === 'available' ? 'text-emerald-600 dark:text-emerald-400' :
+            usernameStatus === 'taken' ? 'text-red-500' :
+            usernameStatus === 'invalid' ? 'text-amber-600' :
+            'text-stone-400'
+          }`}>
+            {usernameStatus === 'checking' && f('username.checking')}
+            {usernameStatus === 'available' && `✓ ${f('username.available')} · bands/${form.username}`}
+            {usernameStatus === 'taken' && f('username.taken')}
+            {usernameStatus === 'invalid' && f('username.invalid')}
+          </p>
+        ) : (
+          <p className="text-xs mt-1 text-stone-400">{f('username.hint')}</p>
+        )}
       </div>
 
       {/* Bio */}

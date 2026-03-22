@@ -33,8 +33,12 @@ export function EditForm({ band }: Props) {
   const [photoPreview, setPhotoPreview] = useState<string | null>(band.photo_url)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
 
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle')
+  const usernameTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const [form, setFormState] = useState({
     name: band.name ?? '',
+    username: band.username ?? '',
     bio: band.bio ?? '',
     formed_year: band.formed_year ? String(band.formed_year) : '',
     province_id: band.province_id ? String(band.province_id) : '',
@@ -72,6 +76,21 @@ export function EditForm({ band }: Props) {
 
   function set(field: string, value: unknown) {
     setFormState((f) => ({ ...f, [field]: value }))
+  }
+
+  function handleUsernameChange(val: string) {
+    const lower = val.toLowerCase().replace(/[^a-z0-9_]/g, '')
+    set('username', lower)
+    if (usernameTimer.current) clearTimeout(usernameTimer.current)
+    if (!lower) { setUsernameStatus('idle'); return }
+    if (!/^[a-z0-9_]{3,30}$/.test(lower)) { setUsernameStatus('invalid'); return }
+    if (lower === (band.username ?? '')) { setUsernameStatus('available'); return }
+    setUsernameStatus('checking')
+    usernameTimer.current = setTimeout(async () => {
+      const res = await fetch(`/api/bands/check-username?username=${lower}&bandId=${band.id}`)
+      const { available } = await res.json()
+      setUsernameStatus(available ? 'available' : 'taken')
+    }, 400)
   }
 
   function toggleGenre(id: number) {
@@ -112,6 +131,10 @@ export function EditForm({ band }: Props) {
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!form.name.trim()) return setError(t('errors.nameRequired'))
+    if (!form.username) return setError(f('username.errorRequired'))
+    if (usernameStatus === 'invalid') return setError(f('username.invalid'))
+    if (usernameStatus === 'taken') return setError(f('username.taken'))
+    if (usernameStatus === 'checking') return setError(f('username.checking'))
     setSubmitting(true)
     setError('')
 
@@ -127,6 +150,7 @@ export function EditForm({ band }: Props) {
 
       await updateBand(band.id, {
         name: form.name.trim(),
+        username: form.username,
         bio: form.bio || null,
         formed_year: form.formed_year ? Number(form.formed_year) : null,
         province_id: form.province_id ? Number(form.province_id) : null,
@@ -145,7 +169,7 @@ export function EditForm({ band }: Props) {
       })
 
       fetch('/api/embeddings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bandId: band.id }) })
-      router.push(`/bands/${band.id}`)
+      router.push(`/bands/${form.username}`)
       router.refresh()
     } catch (err) {
       setError((err as Error).message ?? t('errors.genericError'))
@@ -236,6 +260,34 @@ export function EditForm({ band }: Props) {
       <div>
         <label className={labelClass}>{f('nameLabel')} <span className="text-red-500">*</span></label>
         <Input type="text" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder={f('namePlaceholder')} />
+      </div>
+
+      {/* Username */}
+      <div>
+        <label className={labelClass}>{f('username.label')} <span className="text-red-500">*</span></label>
+        <Input
+          type="text"
+          value={form.username}
+          onChange={(e) => handleUsernameChange(e.target.value)}
+          placeholder={f('username.placeholder')}
+          prefix="@"
+        />
+        {form.username && (
+          <p className={`text-xs mt-1 ${
+            usernameStatus === 'available' ? 'text-emerald-600 dark:text-emerald-400' :
+            usernameStatus === 'taken' ? 'text-red-500' :
+            usernameStatus === 'invalid' ? 'text-amber-600' :
+            'text-stone-400'
+          }`}>
+            {usernameStatus === 'checking' && f('username.checking')}
+            {usernameStatus === 'available' && `✓ ${f('username.available')} · bands/${form.username}`}
+            {usernameStatus === 'taken' && f('username.taken')}
+            {usernameStatus === 'invalid' && f('username.invalid')}
+          </p>
+        )}
+        {!form.username && (
+          <p className="text-xs mt-1 text-stone-400">{f('username.hint')}</p>
+        )}
       </div>
 
       {/* Bio */}

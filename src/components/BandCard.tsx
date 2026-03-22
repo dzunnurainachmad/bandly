@@ -36,7 +36,7 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
       {/* ── Mobile: horizontal list row ── */}
       <div className="flex sm:hidden items-center gap-4 p-4">
         <div className="shrink-0 relative">
-          <Link href={`/bands/${band.id}`}>
+          <Link href={`/bands/${band.username ?? band.id}`}>
             <div className="w-14 h-14 rounded-xl bg-linear-to-br from-amber-100 to-orange-100 overflow-hidden">
               {band.photo_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -65,7 +65,7 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
           )}
         </div>
 
-        <Link href={`/bands/${band.id}`} className="flex-1 min-w-0">
+        <Link href={`/bands/${band.username ?? band.id}`} className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100 truncate">{band.name}</h3>
             {band.is_looking_for_members && (
@@ -74,6 +74,14 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
               </span>
             )}
           </div>
+          {band.username && (
+            <p className="text-[10px] text-stone-400 dark:text-stone-500 truncate">@{band.username}</p>
+          )}
+          {band.owner_display_name && (
+            <p className="text-[10px] text-stone-400 dark:text-stone-500 truncate">
+              {t('by', { name: band.owner_display_name })}
+            </p>
+          )}
           {(band.city_name || band.province_name) && (
             <p className="flex items-center gap-1 text-xs text-stone-400 mt-0.5 truncate">
               <MapPin className="w-3 h-3 shrink-0" />
@@ -143,9 +151,17 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
         </div>
 
         <div className="p-4 flex flex-col flex-1">
-          <Link href={`/bands/${band.id}`} className="hover:underline">
+          <Link href={`/bands/${band.username ?? band.id}`} className="hover:underline">
             <h3 className="font-bold text-lg text-stone-900 dark:text-stone-100 truncate">{band.name}</h3>
           </Link>
+          {band.username && (
+            <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">@{band.username}</p>
+          )}
+          {band.owner_display_name && (
+            <p className="text-xs text-stone-400 dark:text-stone-500">
+              {t('by', { name: band.owner_display_name })}
+            </p>
+          )}
 
           {(band.city_name || band.province_name) && (
             <p className="flex items-center gap-1 text-sm text-stone-500 dark:text-stone-400 mt-1 truncate">

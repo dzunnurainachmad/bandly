@@ -19,6 +19,7 @@ export interface Genre {
 
 export interface Band {
   id: string
+  username: string
   name: string
   bio: string | null
   formed_year: number | null
@@ -42,6 +43,8 @@ export interface Band {
   province_slug?: string
   city_name?: string
   city_slug?: string
+  owner_display_name?: string | null
+  owner_username?: string | null
   genres?: Genre[]
 }
 

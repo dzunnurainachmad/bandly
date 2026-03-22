@@ -74,7 +74,8 @@
   },
   "bandCard": {
     "openBadge": "Open",
-    "openMemberBadge": "Open Member"
+    "openMemberBadge": "Open Member",
+    "by": "by {name}"
   },
   "saveBand": {
     "removeTitle": "Remove from saved",
@@ -227,6 +228,16 @@
     "photoHint": "JPG, PNG, WebP · Max 5 MB",
     "nameLabel": "Band / Project Name",
     "namePlaceholder": "e.g. Burgerkill, Padi Reborn",
+    "username": {
+      "label": "Band Username",
+      "placeholder": "navicula",
+      "hint": "Used for the band URL, e.g. /bands/navicula",
+      "checking": "Checking...",
+      "available": "Available",
+      "taken": "Already taken",
+      "invalid": "3–30 characters, lowercase letters, numbers, and _",
+      "errorRequired": "Band username is required"
+    },
     "bioLabel": "Bio / Description",
     "generateBio": "Generate with AI",
     "generating": "Generating...",

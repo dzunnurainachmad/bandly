@@ -106,6 +106,9 @@ export default async function BandDetailPage({ params }: Props) {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
             <div>
               <h1 className="text-xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100">{band.name}</h1>
+              {band.username && (
+                <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">@{band.username}</p>
+              )}
               {ownerProfile && band.user_id && (
                 <Link href={`/u/${ownerProfile.username ?? band.user_id}`} className="text-xs text-stone-400 hover:text-amber-600 transition-colors mt-0.5 inline-block">
                   {t('by', { name: ownerProfile.display_name ?? t('user') })}

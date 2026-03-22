@@ -44,7 +44,9 @@ function makeBand(overrides: Partial<Band> = {}): Band {
     photo_url: null,
     is_looking_for_members: false,
     user_id: 'user-1',
+    username: 'test-band',
     created_at: '2024-01-01',
+    updated_at: '2024-01-01',
     ...overrides,
   }
 }

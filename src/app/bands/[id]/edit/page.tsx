@@ -12,16 +12,17 @@ export default async function EditBandPage({ params }: Props) {
   const supabase = await createSupabaseServerClient()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect(`/login?next=/bands/${id}/edit`)
+  if (!user) redirect(`/login?next=/bands/${encodeURIComponent(id)}/edit`)
 
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
   const { data: band } = await supabase
     .from('bands_view')
     .select('*')
-    .eq('id', id)
+    .eq(isUuid ? 'id' : 'username', id)
     .single()
 
   if (!band) notFound()
-  if (band.user_id !== user.id) redirect(`/bands/${id}`)
+  if (band.user_id !== user.id) redirect(`/bands/${band.username ?? band.id}`)
 
   const t = await getTranslations('editBand')
 
