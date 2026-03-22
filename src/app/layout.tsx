@@ -13,10 +13,27 @@ import { AuthProvider } from '@/contexts/AuthContext'
 
 const geist = Geist({ subsets: ['latin'] })
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bandtelusur.id'
+
 export const metadata: Metadata = {
   title: 'BandTelusur — Temukan Band Indonesia',
   description:
     'Platform untuk menemukan band dan project musik di seluruh Indonesia. Filter berdasarkan provinsi, kota, dan genre.',
+  metadataBase: new URL(BASE_URL),
+  openGraph: {
+    title: 'BandTelusur — Temukan Band Indonesia',
+    description: 'Platform untuk menemukan band dan project musik di seluruh Indonesia. Filter berdasarkan provinsi, kota, dan genre.',
+    url: BASE_URL,
+    siteName: 'BandTelusur',
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'BandTelusur — Temukan Band Indonesia',
+    description: 'Platform untuk menemukan band dan project musik di seluruh Indonesia.',
+  },
+  robots: { index: true, follow: true },
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

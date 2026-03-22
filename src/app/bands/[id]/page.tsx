@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { MapPin, Calendar, Instagram, Music, UserPlus, ArrowLeft, Pencil, ExternalLink, Mail } from 'lucide-react'
 
@@ -21,8 +22,43 @@ import { BandInsights } from '@/components/BandInsights'
 import { SaveBandButton } from '@/components/SaveBandButton'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bandtelusur.id'
+
 interface Props {
   params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params
+  const band = await getBandById(id)
+  if (!band) return { title: 'Band tidak ditemukan' }
+
+  const genres = Array.isArray(band.genres) ? band.genres.map((g) => g.name).join(', ') : ''
+  const location = [band.city_name, band.province_name].filter(Boolean).join(', ')
+  const description = band.bio
+    ? band.bio.slice(0, 155)
+    : `${band.name} — band dari ${location || 'Indonesia'}${genres ? `. Genre: ${genres}` : ''}.`
+
+  const url = `${BASE_URL}/bands/${band.username ?? band.id}`
+
+  return {
+    title: `${band.name} — BandTelusur`,
+    description,
+    openGraph: {
+      title: band.name,
+      description,
+      url,
+      type: 'website',
+      ...(band.photo_url && { images: [{ url: band.photo_url, width: 1200, height: 630, alt: band.name }] }),
+    },
+    twitter: {
+      card: band.photo_url ? 'summary_large_image' : 'summary',
+      title: band.name,
+      description,
+      ...(band.photo_url && { images: [band.photo_url] }),
+    },
+    alternates: { canonical: url },
+  }
 }
 
 export default async function BandDetailPage({ params }: Props) {
