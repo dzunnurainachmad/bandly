@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Plus, Music, Settings, Bookmark } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
@@ -29,8 +30,7 @@ export default async function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8 p-4 bg-[#fefaf4] dark:bg-[#231d15] rounded-xl border border-stone-200 dark:border-stone-700">
         <div className="flex items-center gap-4 flex-1 min-w-0">
           {profile?.avatar_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={profile.avatar_url} alt={displayName ?? ''} className="w-14 h-14 rounded-full object-cover shrink-0 border border-stone-200 dark:border-stone-700" />
+            <Image src={profile.avatar_url} alt={displayName ?? ''} width={56} height={56} className="rounded-full object-cover shrink-0 border border-stone-200 dark:border-stone-700" />
           ) : (
             <div className="w-14 h-14 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-400 flex items-center justify-center text-xl font-bold shrink-0">
               {initials}

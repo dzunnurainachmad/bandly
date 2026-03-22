@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Music, Youtube, X, ChevronDown, ChevronUp } from 'lucide-react'
 import { usePlayer } from '@/contexts/PlayerContext'
 import clsx from 'clsx'
@@ -67,8 +68,7 @@ export function MiniPlayer() {
         {/* Thumbnail */}
         <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg overflow-hidden shrink-0 bg-stone-700 flex items-center justify-center">
           {track.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={track.photoUrl} alt={track.bandName} className="w-full h-full object-cover" />
+            <Image src={track.photoUrl} alt={track.bandName} width={44} height={44} className="object-cover w-full h-full" />
           ) : (
             <Music className="w-5 h-5 text-stone-400" />
           )}

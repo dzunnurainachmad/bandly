@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import { Music } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
@@ -54,11 +55,12 @@ export default async function PublicProfilePage({ params }: Props) {
       {/* Profile header */}
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 mb-8 text-center sm:text-left">
         {profile.avatar_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={profile.avatar_url}
             alt={displayName}
-            className="w-20 h-20 rounded-full object-cover border-2 border-stone-200 dark:border-stone-700 shrink-0"
+            width={80}
+            height={80}
+            className="rounded-full object-cover border-2 border-stone-200 dark:border-stone-700 shrink-0"
           />
         ) : (
           <div className="w-20 h-20 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-400 flex items-center justify-center text-2xl font-bold shrink-0">

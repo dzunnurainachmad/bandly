@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { MapPin, Music, UserPlus, ChevronRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Badge } from './ui/Badge'
@@ -37,10 +38,9 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
       <div className="flex sm:hidden items-center gap-4 p-4">
         <div className="shrink-0 relative">
           <Link href={`/bands/${band.username ?? band.id}`}>
-            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-amber-100 to-orange-100 overflow-hidden">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-amber-100 to-orange-100 overflow-hidden relative">
               {band.photo_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={band.photo_url} alt={band.name} className="w-full h-full object-cover" />
+                <Image src={band.photo_url} alt={band.name} fill className="object-cover" sizes="56px" />
               ) : (
                 <div className="flex items-center justify-center w-full h-full">
                   <Music className="w-6 h-6 text-amber-400" />
@@ -114,8 +114,7 @@ export function BandCard({ band, isLoggedIn, isSaved = false }: BandCardProps) {
       <div className="hidden sm:flex flex-col flex-1">
         <div className="aspect-video bg-linear-to-br from-amber-100 to-orange-100 relative">
           {band.photo_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={band.photo_url} alt={band.name} className="w-full h-full object-cover" />
+            <Image src={band.photo_url} alt={band.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw" />
           ) : (
             <div className="flex items-center justify-center w-full h-full">
               <Music className="w-12 h-12 text-amber-400" />

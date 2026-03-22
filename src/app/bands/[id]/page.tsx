@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 import { MapPin, Calendar, Instagram, Music, UserPlus, ArrowLeft, Pencil, ExternalLink, Mail } from 'lucide-react'
 
@@ -128,8 +129,7 @@ export default async function BandDetailPage({ params }: Props) {
         {/* Cover photo */}
         <div className="aspect-video bg-linear-to-br from-amber-100 to-orange-100 relative">
           {band.photo_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={band.photo_url} alt={band.name} className="w-full h-full object-cover" />
+            <Image src={band.photo_url} alt={band.name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" priority />
           ) : (
             <div className="flex items-center justify-center w-full h-full">
               <Music className="w-16 h-16 text-amber-400" />
